@@ -18,7 +18,6 @@ import java.io.IOException;
 }
 %type Integer
 %{
-public static void main(String [] arg) throws FileNotFoundException, IOException{ 
 	Parser parser;
 	
 	public Token(String lexema, int numero){
@@ -28,12 +27,6 @@ public static void main(String [] arg) throws FileNotFoundException, IOException
 	public void initPar(Parser parser){
 		this.parser = parser;
 	}
-	
-   }
-   
-	
-
-
 
 %}
 letra = [a-zA-Z]
