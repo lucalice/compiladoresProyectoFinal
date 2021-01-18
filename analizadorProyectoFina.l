@@ -93,6 +93,7 @@ dospuntos= ":"
 coma= ","
 ca= "{"
 cc= "}"
+diferenteuni = "!"
 
 %%
 {verdadero} {return 1;}
@@ -139,7 +140,7 @@ cc= "}"
 {cc} {return 42;}
 {numero} {return 43;}
 {cadena} {return 44;}
-
+{diferenteuni} {return 45;}
 {esps} {/*El analizador ignora*/}
 . { System.out.println("Error al identificar token");
 	return -1;}
