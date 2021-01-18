@@ -1,3 +1,3 @@
-public Token{
+public class Token{
 
 }
