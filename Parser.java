@@ -44,12 +44,18 @@ public static final int CC = 1042;
 public static final int NUMERO = 1043;
 public static final int CADENA = 1044;
 public class Parser{
+	
+	private Yylex lexer;
 
-	public void Parser(){
+	public Parser(){
 		
 	}
 	
-	public error(mensaje){
+	public Parser(Yylex lexer){
+		this.lexer = lexer;
+	}
+	
+	public void error(mensaje){
 		System.out,println(mensaje);
 	}
 
