@@ -49,6 +49,13 @@ public class Parser{
 		
 	}
 
+	public void eat(int value){
+		if(CurrentToken.equals(value)){
+			CurrentToken=lexer.yylex();
+		}else{
+			System.out.println("Erroe de sintaxis");
+		}
+	}
 	public static void programa() throws IOException{
 		declaraciones();
 		funciones();
