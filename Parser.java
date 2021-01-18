@@ -1,164 +1,230 @@
-package dds;
 
-import java.io.IOException;
-import java.util.ArrayList;
-
+    public static final int VER = 1000;
+    public static final int FAL = 1001;
+    public static final int ELSE = 1002;
+    public static final int WHILE = 1003;
+    public static final int FUNC = 1004;
+    public static final int DO = 1005;
+    public static final int IF = 1006;
+    public static final int SWITCH = 1007;
+    public static final int CASE = 1008;
+    public static final int DEFAULT = 1009;
+    public static final int FOR = 1010;
+    public static final int RETURN = 1011;
+    public static final int BREAK = 1012;
+    public static final int CONTINUE = 1013;
+    public static final int ID = 1014;
+    public static final int INT = 1015;
+    public static final int FLOAT = 1016;
+    public static final int CHAR = 1017;
+    public static final int DOUBLE = 1018;
+    public static final int VOID = 1019;
+    public static final int FUNC = 1020;
+    public static final int PA = 1021;
+    public static final int PI = 1022;
+    public static final int IGUAL = 1023;
+    public static final int SUMA = 1024;
+    public static final int RESTA = 1025;
+    public static final int MULTI = 1026;
+    public static final int DIVI = 1027;
+    public static final int MOD = 1028;
+    public static final int INCREMENTO = 1029;
+    public static final int OR = 1030;
+    public static final int AND = 1031;
+    public static final int IGUALQ = 1032;
+    public static final int DIFEQ = 1033;
+    public static final int MENOR = 1034;
+    public static final int MAYOR = 1035;
+    public static final int MENORIGUAL = 1036;
+    public static final int MAYORIGUAL = 1037;
+    public static final int PCOMA = 1038;
+    public static final int DOSPU = 1039;
+    public static final int COMA = 1040;
+    public static final int CA = 1041;
+    public static final int CC = 1042;
+    public static final int NUMERO = 1043;
+	public static final int CADENA = 1044;
 public class Parser{
-    ArrayList<Symbol> tablaSimbolos;
-    ArrayList<Type> tablaTipos;
-    public static final int COMA = 1000;
-    public static final int PYC = 1001;
-    public static final int LCOR = 1002;
-    public static final int RCOR = 1003;
-    public static final int INT = 1004;
-    public static final int FLOAT = 1005;
-    public static final int NUM = 1006;
-    public static final int ID = 1007;
-    Yylex lexer;
 
-    public Parser(Yylex lexer)throws IOException{
-        this.lexer = lexer;
-        actual = lexer.yylex();
-        tablaSimbolos = new ArrayList<Symbol>();
-        tablaTipos = new ArrayList<Type>();
-        tablaTipos.add(new Type(0, "int", 4, -1, -1));
-        tablaTipos.add(new Type(1, "float", 4, -1, -1));
+	public void Parser(){
+		
+	}
+
+	public static void programa() throws IOException{
+		declaraciones();
+		funciones();
+	}
+	public static void declaraciones() throws IOException{
+		tipo();
+		lista_var();
+		if(CurrentToken.equals(PCOMA)){
+			CurrentToken=lexer.yylex();
+			declaraciones();
+		}
+	}
+
+	public static void tipo(){
+		basico();
+		compuesto();
+	}
+
+	public static void basico(){
+		if(CurrentToken.equals(INT)){
+			CurrentToken=lexer.yylex();
+		}
+		if(CurrentToken.equals(FLOAT)){
+			CurrentToken=lexer.yylex();
+		}
+		if(CurrentToken.equals(CHAR)){
+			CurrentToken=lexer.yylex();
+		}
+		if(CurrentToken.equals(DOUBLE)){
+			CurrentToken=lexer.yylex();
+		}
+		if(CurrentToken.equals(VOID)){
+			CurrentToken=lexer.yylex();
+		}
+	}
+
+	public static void compuesto(){
+		if(CurrentToken.equals(CA)){
+			CurrentToken=lexer.yylex();
+			if(CurrentToken.equals(NUMERO)){
+				CurrentToken=lexer.yylex();
+				if(CurrentToken.equals(CC)){
+					CurrentToken=lexer.yylex();
+					compuesto();
+				}
+			}
+		}
+	}
+
+	public static void lista_var(){
+		if(CurrentToken.equals(ID)){
+			CurrentToken=lexer.yylex();
+			lista_varPrima();
+		}
+	}
+
+	public static void lista_varPrima(){
+		if(CurrentToken.equals(COMA)){
+			CurrentToken=lexer.yylex();
+			if(CurrentToken.equals(ID)){
+				CurrentToken=lexer.yylex();
+				lista_varPrima();
+			}
+		}
+	}
+
+	public static void funciones(){
+		if(CurrentToken.equals(FUNC)){
+			CurrentToken=lexer.yylex();
+			if(CurrentToken.equals(ID)){
+				CurrentToken=lexer.yylex();
+				if(CurrentToken.equals(CA)){
+					CurrentToken=lexer.yylex();
+					argumentos();
+					if(CurrentToken.equals(CC)){
+						CurrentToken=lexer.yylex();
+					}
+				}
+			}
+		}
+	}
+
+
+
+  	public static void predeterminado()throws IOException{
+  		if(CurrentToken.equals(DEFAULT)){
+  			CurrentToken=lexer.yylex();
+  			if(CurrentToken.equals(DOSPU)){
+  				CurrentToken=lexer.yylex();
+  				instrucciones();
+			}
+		}
+  	}
+
+	public static void bool()throws IOException{
+  		comp();
+  		boolP();
     }
+  	public static void boolP()throws IOException{
+  		if(CurrentToken.equals(OR)){
+	  		CurrentToken=lexer.yylex();
+	  		comb();
+	  		boolP();
+  		}
+  	}
+    public static void comb()throws IOException{
+		igualdad();
+		combP();
+	}
+	public static void combP()throws IOException{
+		if(CurrentToken.equals(AND)){
+	  		CurrentToken=lexer.yylex();
+	  		igualdad();
+	  		combP();
+  		}
+	}
 
-    Token actual;
-    int dir = 0;
+	public static void igualdad() throws IOException{
+		rel();
+		igualdadPP();
+	}
 
-    void parse()throws IOException{
-        D();
-        printTS();
-        printTT();
-    }
+	public static void igualdadPP() throws IOException{
+		igualdadP();
+		igualdadPP();
+	}
 
-    void eat(int i) throws IOException{
-        if(actual.equals(i)){
-            actual =lexer.yylex();
-        }else{
-            error("Error de sintaxis");
-        }
-    }
+	public static void igualdadP() throws IOException{
+		if(CurrentToken.equals(IGUALQ)){
+	  		CurrentToken=lexer.yylex();
+	  		rel();
+  		}else if (CurrentToken.equals(DIFEQ)) {
+  			CurrentToken=lexer.yylex();
+  			rel();
+  		}
+	}
 
-    void D()throws IOException{
-        if(actual.equals(INT) || actual.equals(FLOAT) ){
-            int tipo = T();
-            L(tipo);
-            eat(PYC);
-            D();
-        }
-    }
+	public static void rel() throws IOException{
+		exp();
+		relP();
+	}
 
-    int T()throws IOException{
-        int tipo;
-        tipo = B();
-        tipo = C(tipo);
-        return tipo;
-    }
-
-    int B() throws IOException{
-        if(actual.equals(INT)){
-            eat(INT);
-            return 0;
-        }
-        if(actual.equals(FLOAT)){
-            eat(FLOAT);
-            return 1;
-        }
-        error("error de sintaxis");
-        return -1;
-    }
-
-    int C (int base)throws IOException{
-        String valor;
-        int tipo;
-        int id;
-        if(actual.equals(LCOR)){            
-            eat(LCOR);
-            valor = actual.valor;
-            eat(NUM);
-            eat(RCOR);
-            tipo = C(base);            
-            id = tablaTipos.size();
-            int tam = Integer.parseInt(valor) * getTam(tipo);
-            tablaTipos.add(new Type(id, "array", tam ,Integer.parseInt(valor),tipo));
-            return id;
-        }else{
-            return base;
-        }
-    }
-
-    void L(int tipo)throws IOException{
-        if(actual.equals(ID)){
-            if(!buscar(actual.valor)){
-                tablaSimbolos.add(new Symbol(actual.valor,dir, tipo, 0, null ));
-                dir += getTam(tipo);
-            }else{
-                error("Variable definida dos veces");
-            }
-            eat(ID);
-            LP(tipo);
-        }else{
-            error("error de sintaxis");
-        }
-    }
-
-    void LP(int tipo)throws IOException{
-        if(actual.equals(COMA)){
-            eat(COMA);
-            if(!buscar(actual.valor)){
-                tablaSimbolos.add(new Symbol(actual.valor,dir, tipo, 0, null ));
-                dir += getTam(tipo);
-            }else{
-                error("Variable definida dos veces");
-            }
-            eat(ID);
-            LP(tipo);
-        }
-    }
-
-    void error(String msg){
-        System.out.println(msg);
-    }
-
-    boolean buscar(String id){
-        for(Symbol s: tablaSimbolos){
-            if(s.id.equals(id)){
-                return true;
-            }
-        }
-        return false;
-    }
-
-    int getTam(int id){
-        for(Type t : tablaTipos){
-            if(id== t.id){
-                return t.tam;
-            }
-        }
-        return -1;
-    }
-
-
-    void printTT(){
-        System.out.println("Tabla de tipos");
-        for(Type t : tablaTipos){
-            System.out.println(t.id+"\t"+t.type+"\t"+t.tam+"\t"+t.elem+"\t"+t.tipoBase);
-        }    
-    }
-
-    void printTS(){
-        System.out.println("Tabla de símbolos");
-        int i=0;
-        for(Symbol s : tablaSimbolos){
-            System.out.println(""+i+"\t"+s.id+"\t"+s.dir+"\t"+s.type+"\t"+s.var);
-            i++;
-        }    
-    }
-    
-    public static term() throws IOException{
+	public static void relP() throws IOException{
+		if(CurrentToken.equals(MENOR)){
+	  		CurrentToken=lexer.yylex();
+	  		exp();
+  		}else if (CurrentToken.equals(MENORIGUAL)) {
+  			CurrentToken=lexer.yylex();
+  			exp();
+  		}else if (CurrentToken.equals(MAYORIGUAL)) {
+  			CurrentToken=lexer.yylex();
+  			exp();
+  		}else if (CurrentToken.equals(MAYOR)) {
+  			CurrentToken=lexer.yylex();
+  			exp();
+  		}
+ 	 }
+  	public static void exp() throws IOException{
+  		term();
+  		expPP();
+  	}
+  	public static void expPP() throws IOException{
+  		expP();
+  		expPP();
+  	}
+  	public static void expP() throws IOException{
+  		if(CurrentToken.equals(SUMA)){
+	  		CurrentToken=lexer.yylex();
+	  		term();
+  		}else if (CurrentToken.equals(RESTA)) {
+  			CurrentToken=lexer.yylex();
+  			term();
+  		}
+	}
+	public static term() throws IOException{
         unario();
         ter();
     }
@@ -251,6 +317,6 @@ public class Parser{
                 CurrentToken=lexer.yylex();
                 local();
             }
-    }
+    }  
 
 }
