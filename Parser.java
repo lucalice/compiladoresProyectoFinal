@@ -48,12 +48,16 @@ public class Parser{
 	public void Parser(){
 		
 	}
+	
+	public error(mensaje){
+		System.out,println(mensaje);
+	}
 
 	public void eat(int value){
 		if(CurrentToken.equals(value)){
 			CurrentToken=lexer.yylex();
 		}else{
-			System.out.println("Erroe de sintaxis");
+			error("Error de sintaxis");
 		}
 	}
 	public static void programa() throws IOException{
@@ -63,10 +67,8 @@ public class Parser{
 	public static void declaraciones() throws IOException{
 		tipo();
 		lista_var();
-		if(CurrentToken.equals(PCOMA)){
-			CurrentToken=lexer.yylex();
-			declaraciones();
-		}
+		eat(PCOMA);
+		declaraciones();
 	}
 
 	public static void tipo(){
@@ -75,21 +77,11 @@ public class Parser{
 	}
 
 	public static void basico(){
-		if(CurrentToken.equals(INT)){
-			CurrentToken=lexer.yylex();
-		}
-		if(CurrentToken.equals(FLOAT)){
-			CurrentToken=lexer.yylex();
-		}
-		if(CurrentToken.equals(CHAR)){
-			CurrentToken=lexer.yylex();
-		}
-		if(CurrentToken.equals(DOUBLE)){
-			CurrentToken=lexer.yylex();
-		}
-		if(CurrentToken.equals(VOID)){
-			CurrentToken=lexer.yylex();
-		}
+		eat(INT);
+		eat(FLOAT);
+		eat(CHAR);
+		eat(DOUBLE);
+		eat(VOID);
 	}
 
 	public static void compuesto(){
