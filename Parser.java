@@ -47,19 +47,19 @@ public class Parser{
 	
 	private Yylex lexer;
 
-	public Parser(){
+	public Parser() throws IOException{
 		
 	}
 	
-	public Parser(Yylex lexer){
+	public Parser(Yylex lexer) throws IOException{
 		this.lexer = lexer;
 	}
 	
-	public void error(mensaje){
+	public void error(mensaje) throws IOException{
 		System.out,println(mensaje);
 	}
 
-	public void eat(int value){
+	public void eat(int value) throws IOException{
 		if(CurrentToken.equals(value)){
 			CurrentToken=lexer.yylex();
 		}else{
