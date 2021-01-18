@@ -157,5 +157,100 @@ public class Parser{
             i++;
         }    
     }
+    
+    public static term() throws IOException{
+        unario();
+        ter();
+    }
+    public static ter() throws IOException{
+        if(CurrentToken.equals(MULTI)){
+            CurrentToken=lexer.yylex();
+            unario();
+            ter();
+        } else if(CurrentToken.equals(DIVI)){
+            CurrentToken=lexer.yylex();
+            unario();
+            ter();
+        }else if(CurrentToken.equals(MOD)){
+            CurrentToken=lexer.yylex();
+            unario();
+            ter();
+        }
+    }
+
+    public static unario() throws IOException{
+        if(CurrentToken.equals(DIFUNI)){
+            CurrentToken=lexer.yylex();
+            unario();
+        } else if(CurrentToken.equals(RESTA)){
+            CurrentToken=lexer.yylex();
+            unario();
+        }else{
+            factor();
+        }
+    }
+
+    public static factor() throws IOException{
+        if(CurrentToken.equals(CA)){
+            CurrentToken=lexer.yylex();
+            bool();
+            if(CurrentToken.equals(CC)){
+                CurrentToken=lexer.yylex();
+            }else if(CurrentToken.equals(NUMERO)){
+                CurrentToken=lexer.yylex();
+            }else if(CurrentToken.equals(CADENA)){
+                CurrentToken=lexer.yylex();
+            }else if(CurrentToken.equals(VER)){
+                CurrentToken=lexer.yylex();
+            }else if(CurrentToken.equals(FAL)){
+                CurrentToken=lexer.yylex();
+            }else if(CurrentToken.equals(ID)){
+                CurrentToken=lexer.yylex();
+                if(CurrentToken.equals(CA)){
+                    CurrentToken=lexer.yylex();
+                    parametros();
+                    if(CurrentToken.equals(CC)){
+                        CurrentToken=lexer.yylex();
+                    }
+                }
+            } else{
+                localizacion();
+            }
+        }
+    }
+
+    public static parametros() throws IOException{
+        listparam();
+    }
+
+    public static listparam() throws IOException{
+        bool();
+        lispar();
+    }
+
+    public static lispar() throws IOException{
+       if(CurrentToken.equals(COMA)){
+            CurrentToken=lexer.yylex();
+            bool();
+            lispar();
+        }
+    }
+
+    public static localizacion() throws IOException{
+        if(CurrentToken.equals(ID)){
+            CurrentToken=lexer.yylex();
+            local();
+        }
+    }
+
+    public static local() throws IOException{
+        if(CurrentToken.equals(CA)){
+            CurrentToken=lexer.yylex();
+            bool();
+            if(CurrentToken.equals(CC)){
+                CurrentToken=lexer.yylex();
+                local();
+            }
+    }
 
 }
