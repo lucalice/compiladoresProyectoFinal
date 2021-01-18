@@ -85,49 +85,29 @@ public class Parser{
 	}
 
 	public static void compuesto(){
-		if(CurrentToken.equals(CA)){
-			CurrentToken=lexer.yylex();
-			if(CurrentToken.equals(NUMERO)){
-				CurrentToken=lexer.yylex();
-				if(CurrentToken.equals(CC)){
-					CurrentToken=lexer.yylex();
-					compuesto();
-				}
-			}
-		}
+		eat(CA);
+		eat(NUMERO);
+		eat(CC);
+		compuesto();
 	}
 
 	public static void lista_var(){
-		if(CurrentToken.equals(ID)){
-			CurrentToken=lexer.yylex();
-			lista_varPrima();
-		}
+		eat(ID);
+		lista_varPrima();
 	}
 
 	public static void lista_varPrima(){
-		if(CurrentToken.equals(COMA)){
-			CurrentToken=lexer.yylex();
-			if(CurrentToken.equals(ID)){
-				CurrentToken=lexer.yylex();
-				lista_varPrima();
-			}
-		}
+		eat(COMA);
+		eat(ID);
+		lista_varPrima();
 	}
 
 	public static void funciones(){
-		if(CurrentToken.equals(FUNC)){
-			CurrentToken=lexer.yylex();
-			if(CurrentToken.equals(ID)){
-				CurrentToken=lexer.yylex();
-				if(CurrentToken.equals(CA)){
-					CurrentToken=lexer.yylex();
-					argumentos();
-					if(CurrentToken.equals(CC)){
-						CurrentToken=lexer.yylex();
-					}
-				}
-			}
-		}
+		eat(FUNC);
+		eat(ID);
+		eat(CA);
+		argumentos();
+		eat(CC);
 	}
 
 
