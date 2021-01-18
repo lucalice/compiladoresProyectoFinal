@@ -1,4 +1,8 @@
 //Nombre: Carranza Escobar Luis Enrique 315286513
+//Nombre:
+//Nombre:
+//Nombre:
+
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
@@ -15,25 +19,16 @@ import java.io.IOException;
 %type Integer
 %{
 public static void main(String [] arg) throws FileNotFoundException, IOException{ 
-
+	Parser parser;
 	
-      	//Esto lo debemos poner en un archivo main.
-      	FileReader f = new FileReader(arg[0]);
-      	BufferedReader b = new BufferedReader(f);
-
-      	Yylex lexer = new Yylex(b);
-		try{
-            Integer lexema = lexer.yylex();
-            System.out.println(lexema);
-            while(lexema != null){
-            
-            lexema = lexer.yylex();
-            System.out.println(lexema);
-		}
-            System.out.println();
-		}catch(IOException e){
-			System.out.println("Ocurrio un error al intentar acceder a la consola");
-		}
+	public Token(String lexema, int numero){
+		return new Token(num, lexema);
+	}
+	
+	public void initPar(Parser parser){
+		this.parser = parser;
+	}
+	
    }
    
 	
