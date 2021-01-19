@@ -43,10 +43,13 @@ public static final int CA = 1041;
 public static final int CC = 1042;
 public static final int NUMERO = 1043;
 public static final int CADENA = 1044;
+public static final int LLAVED = 1045;
+public static final int LLAVEI = 1046;
 public class Parser{
 	
 	private Yylex lexer;
 
+	
 	public Parser() throws IOException{
 		
 	}
