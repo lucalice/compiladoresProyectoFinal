@@ -305,5 +305,196 @@ public class Parser{
                 local();
             }
     }  
+	    
+//8 - 14
+	public void argumentos(Stack args)throws IOException{
+		if(args != nule){
+			list_args(args);
+		}
+	}
+	
+	public void list_args(Stack args) throws IOException{
+		tipo();
+		if(CurrentToken.equals(ID)){
+			eat(CurrentToken);
+			lista_argsP();
+		}else{
+			error();
+		}
+	}
+	
+	public void lista_argsP() throws IOException{
+		if (CurrentToken.equals(COMA)){
+			eat(CurrentToken);
+			tipo();
+			if(CurrentToken.equals(ID)){
+				eat(CurrentToken);
+				lista_argsP();
+			}else{
+				error();
+			}
+		}
+	}
+	
+	public void bloque() throws IOException{
+		declaraciones();
+		instrucciones();
+	}
+	
+	public void instrucciones() throws IOException{
+		sentencia();
+		if (CurrentToken == 1002){
+			instruccionesP();
+		}else{
+			error();
+		}
+	}
+	
+	public void instruccionesP() throws IOException{		
+		if(CurrentToken.equals(WHILE) || CurrentToken.equals(SWITCH) || CurrentToken.equals(IF) || CurrentToken.equals(CASE) || CurrentToken.equals(DO)){
+			eat(CurrentToken)
+			sentencia();
+			instruccionesP();
+		}
+		if(CurrentToken.equals(ID) || CurrentToken.equals(PA)){
+			eat(CurrentToken);
+			sentencia();
+			instruccionesP();
+		}
+		if(CurrentToken.equals(INT) || CurrentToken.equals(FLOAT) || CurrentToken.equals(CHAR) || CurrentToken.equals(DOUBLE) || CurrentToken.equals(VOID)){
+			eat(CurrentToken);
+			sentencia();
+			instruccionesP();
+		}
+	}
+	
+	public void sentencia() throws IOException{
+		if(CurrentToken.equals(ID) || CurrentToken.equals(PA)){
+			localizacion();
+			if (CurrentToken.equals(IGUAL)){
+				eat(CurrentToken);
+				if (CurrentToken.equals(LLAVED)){
+					eat(CurrentToken);
+					bool();
+					if (CurrentToken.equals(LLAVEI)){
+						eat(CurrentToken);
+					}else{
+						error();
+					}
+				}else{
+						error();
+					}
+				
+			}else{
+						error();
+					}
+		}
+		if(CurrentToken.equals(INT) || CurrentToken.equals(FLOAT) || CurrentToken.equals(CHAR) || CurrentToken.equals(DOUBLE) || CurrentToken.equals(VOID)){
+			bloque();
+		}
+		if(CurrentToken.equals(IF)){
+			eat(CurrentToken);
+			if(CurrentToken.equals(PA)){
+				eat(CurrentToken);
+				bool();
+				if(CurrentToken.equals(PI)){
+					eat(CurrentToken);
+					sentencia();
+					sentenciaP();
+				}else{
+					error();
+				}
+			}else{
+				error();
+			}
+		}
+		if(CurrentToken.equals(DO)){
+			eat(CurrentToken);
+			sentencia();
+			if(CorrentToken.equals(WHILE)){
+				eat(CurrentToken);
+				if(CorrentToken.equals(PA)){
+					eat(CurrentToken);
+					bool();
+					if(CorrentToken.equals(PI)){
+						eat(CurrentToken);
+						
+					}else{
+						error();
+					}
+				}else{
+					error();
+				}	
+			}else{
+				error();
+			}			
+		}
+		if(CurrentToken(BREAK)){
+			eat(CurrentToken);
+			if(CurrentToken.equals(PCOMA)){
+				eat(CurrentToken);
+			}else{
+				error();
+			}
+		}
+		if(CurrentToken.equals(SWITCH)){
+			eat(CurrentToken);
+			if(CurrentToken.equals(PA)){
+				eat(CurrentToken);
+				bool();
+				if(CurrentToken.equals(PI)){
+					eat(CurrentToken);
+					if(CurrentToken.equals(LLAVED)){
+						eat(CurrentToken);
+						casos();
+						if(CurrentToken.equals(LLAVEI)){
+							eat(CurrentToken);
+						}else{
+							error();
+						}
+					}else(
+						error();
+					)
+				}
+			}else{
+				error
+			}
+			
+		}
+		
+	}
+	public void sentenciaP() throws IOException{
+		if(CurrentToken.equals(ELSE)){
+			eat(CurrentToken);
+			sentencia();
+		}
+	}
+	public void casos() throws IOException{
+		if(CurrentToken.equals(CASE)){
+			caso();
+			casos();
+		}
+		if(CurrentToken.equals(DEFAULT)){
+			predeterminado();
+		}
+	}
+	public void caso() throws IOException{
+		if(CurrentToken.equals(CASE)){
+			eat(CurrentToken);
+			if(CurrentToken.equals(NUMERO)){
+				eat(CurrentToken);
+				if(CurrentToken.equals(DOSPU)){
+					eat(CurrentToken);
+					instrucciones();
+				}else{
+					error();
+				}
+			}else{
+				error();
+			}
+		}
+	}
+	    
+//-------------------
 
 }
