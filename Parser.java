@@ -48,12 +48,14 @@ public static final int LLAVEI = 1046;
 public class Parser{
 	
 	private Yylex lexer;
-
+	Token currentToken;
 	
-	public Parser() throws IOException{
-		
+	public Parser(Yylex lexer) throws IOException{
+		this.lexer = lexer;
 	}
-	
+	public void init(){
+		this.currentToken = lexer.yylex()	
+	}
 	public Parser(Yylex lexer) throws IOException{
 		this.lexer = lexer;
 	}
