@@ -12,7 +12,7 @@ public static final int LLAVEI = 1046;
 	public void list_args(Stack args) throws IOException{
 		tipo();
 		if(CurrentToken.equals(ID)){
-			CurrentToken = lexer.yylex();
+			eat(CurrentToken);
 			lista_argsP();
 		}else{
 			error();
@@ -21,10 +21,10 @@ public static final int LLAVEI = 1046;
 	
 	public void lista_argsP() throws IOException{
 		if (CurrentToken.equals(COMA)){
-			CurrentToken = lexer.yylex();
+			eat(CurrentToken);
 			tipo();
 			if(CurrentToken.equals(ID)){
-				CurrentToken = lexer.yylex();
+				eat(CurrentToken);
 				lista_argsP();
 			}else{
 				error();
@@ -48,17 +48,17 @@ public static final int LLAVEI = 1046;
 	
 	public void instruccionesP() throws IOException{		
 		if(CurrentToken.equals(WHILE) || CurrentToken.equals(SWITCH) || CurrentToken.equals(IF) || CurrentToken.equals(CASE) || CurrentToken.equals(DO)){
-			CurrentToken = lexer.yylex();
+			eat(CurrentToken)
 			sentencia();
 			instruccionesP();
 		}
 		if(CurrentToken.equals(ID) || CurrentToken.equals(PA)){
-			CurrentToken = lexer.yylex();
+			eat(CurrentToken);
 			sentencia();
 			instruccionesP();
 		}
 		if(CurrentToken.equals(INT) || CurrentToken.equals(FLOAT) || CurrentToken.equals(CHAR) || CurrentToken.equals(DOUBLE) || CurrentToken.equals(VOID)){
-			CurrentToken = lexer.yylex();
+			eat(CurrentToken);
 			sentencia();
 			instruccionesP();
 		}
@@ -68,12 +68,12 @@ public static final int LLAVEI = 1046;
 		if(CurrentToken.equals(ID) || CurrentToken.equals(PA)){
 			localizacion();
 			if (CurrentToken.equals(IGUAL)){
-				CurrentToken = lexer.yylex();
+				eat(CurrentToken);
 				if (CurrentToken.equals(LLAVED)){
-					CurrentToken = lexer.yylex();
+					eat(CurrentToken);
 					bool();
 					if (CurrentToken.equals(LLAVEI)){
-						CurrentToken = lexer.yylex();
+						eat(CurrentToken);
 					}else{
 						error();
 					}
@@ -89,12 +89,12 @@ public static final int LLAVEI = 1046;
 			bloque();
 		}
 		if(CurrentToken.equals(IF)){
-			CurrentToken = lexer.yylex();
+			eat(CurrentToken);
 			if(CurrentToken.equals(PA)){
-				CurrentToken = lexer.yylex();
+				eat(CurrentToken);
 				bool();
 				if(CurrentToken.equals(PI)){
-					CurrentToken = lexer.yylex();
+					eat(CurrentToken);
 					sentencia();
 					sentenciaP();
 				}else{
@@ -105,15 +105,15 @@ public static final int LLAVEI = 1046;
 			}
 		}
 		if(CurrentToken.equals(DO)){
-			CurrentToken = lexer.yylex();
+			eat(CurrentToken);
 			sentencia();
 			if(CorrentToken.equals(WHILE)){
-				CurrentToken = lexer.yylex();
+				eat(CurrentToken);
 				if(CorrentToken.equals(PA)){
-					CurrentToken = lexer.yylex();
+					eat(CurrentToken);
 					bool();
 					if(CorrentToken.equals(PI)){
-						CurrentToken = lexer.yylex();
+						eat(CurrentToken);
 						
 					}else{
 						error();
@@ -126,25 +126,25 @@ public static final int LLAVEI = 1046;
 			}			
 		}
 		if(CurrentToken(BREAK)){
-			CurrentToken = lexer.yylex();
+			eat(CurrentToken);
 			if(CurrentToken.equals(PCOMA)){
-				CurrentToken = lexer.yylex();
+				eat(CurrentToken);
 			}else{
 				error();
 			}
 		}
 		if(CurrentToken.equals(SWITCH)){
-			CurrentToken = lexer.yylex();
+			eat(CurrentToken);
 			if(CurrentToken.equals(PA)){
-				CurrentToken = lexer.yylex();
+				eat(CurrentToken);
 				bool();
 				if(CurrentToken.equals(PI)){
-					CurrentToken = lexer.yylex();
+					eat(CurrentToken);
 					if(CurrentToken.equals(LLAVED)){
-						CurrentToken = lexer.yylex();
+						eat(CurrentToken);
 						casos();
 						if(CurrentToken.equals(LLAVEI)){
-							CurrentToken = lexer.yylex();
+							eat(CurrentToken);
 						}else{
 							error();
 						}
@@ -161,7 +161,7 @@ public static final int LLAVEI = 1046;
 	}
 	public void sentenciaP() throws IOException{
 		if(CurrentToken.equals(ELSE)){
-			CurrentToken = lexer.yylex();
+			eat(CurrentToken);
 			sentencia();
 		}
 	}
@@ -176,11 +176,11 @@ public static final int LLAVEI = 1046;
 	}
 	public void caso() throws IOException{
 		if(CurrentToken.equals(CASE)){
-			CurrentToken = lexer.yylex();
+			eat(CurrentToken);
 			if(CurrentToken.equals(NUMERO)){
-				CurrentToken = lexer.yylex();
+				eat(CurrentToken);
 				if(CurrentToken.equals(DOSPU)){
-					CurrentToken = lexer.yylex();
+					eat(CurrentToken);
 					instrucciones();
 				}else{
 					error();
