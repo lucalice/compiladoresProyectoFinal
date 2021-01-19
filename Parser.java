@@ -122,13 +122,11 @@ public class Parser{
 
 
   	public static void predeterminado()throws IOException{
-  		if(CurrentToken.equals(DEFAULT)){
-  			CurrentToken=lexer.yylex();
-  			if(CurrentToken.equals(DOSPU)){
-  				CurrentToken=lexer.yylex();
-  				instrucciones();
-			}
-		}
+  		
+		eat(DEFAULT);
+		eat(DOSPU);
+  		instrucciones();
+			
   	}
 
 	public static void bool()throws IOException{
@@ -136,22 +134,20 @@ public class Parser{
   		boolP();
     }
   	public static void boolP()throws IOException{
-  		if(CurrentToken.equals(OR)){
-	  		CurrentToken=lexer.yylex();
-	  		comb();
-	  		boolP();
-  		}
+  		eat(OR)
+	  	comb();
+	  	boolP();
+  		
   	}
-    public static void comb()throws IOException{
+  	public static void comb()throws IOException{
 		igualdad();
 		combP();
 	}
 	public static void combP()throws IOException{
-		if(CurrentToken.equals(AND)){
-	  		CurrentToken=lexer.yylex();
+			eat(AND);
 	  		igualdad();
 	  		combP();
-  		}
+  		
 	}
 
 	public static void igualdad() throws IOException{
@@ -166,10 +162,10 @@ public class Parser{
 
 	public static void igualdadP() throws IOException{
 		if(CurrentToken.equals(IGUALQ)){
-	  		CurrentToken=lexer.yylex();
+	  		eat(IGUALQ);
 	  		rel();
   		}else if (CurrentToken.equals(DIFEQ)) {
-  			CurrentToken=lexer.yylex();
+  			eat(DIFEQ);
   			rel();
   		}
 	}
@@ -181,16 +177,16 @@ public class Parser{
 
 	public static void relP() throws IOException{
 		if(CurrentToken.equals(MENOR)){
-	  		CurrentToken=lexer.yylex();
+	  		eat(MENOR);
 	  		exp();
   		}else if (CurrentToken.equals(MENORIGUAL)) {
-  			CurrentToken=lexer.yylex();
+  			eat(MENORIGUAL);
   			exp();
   		}else if (CurrentToken.equals(MAYORIGUAL)) {
-  			CurrentToken=lexer.yylex();
+  			eat(MAYORIGUAL);
   			exp();
   		}else if (CurrentToken.equals(MAYOR)) {
-  			CurrentToken=lexer.yylex();
+  			eat(MAYOR);
   			exp();
   		}
  	 }
@@ -204,10 +200,10 @@ public class Parser{
   	}
   	public static void expP() throws IOException{
   		if(CurrentToken.equals(SUMA)){
-	  		CurrentToken=lexer.yylex();
+	  		eat(SUMA);
 	  		term();
   		}else if (CurrentToken.equals(RESTA)) {
-  			CurrentToken=lexer.yylex();
+  			eat(RESTA)
   			term();
   		}
 	}
