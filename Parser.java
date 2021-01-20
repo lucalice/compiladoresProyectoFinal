@@ -451,25 +451,16 @@ public class Parser{
 			localizacion();
 			if (currentToken.clase == (IGUAL)){
 				eat(currentToken.clase);
-				if (currentToken.clase == (LLAVED)){
-					eat(currentToken.clase);
-					bool();
-					if (currentToken.clase == (LLAVEI)){
-						eat(currentToken.clase);
-					}else{
-						error();
-					}
-				}else{
-						error();
-					}
-				
+				bool();				
 			}else{
-						error();
-					}
+				error();
+			}
 		}
+		
 		if(currentToken.clase == (INT) || currentToken.clase == (FLOAT) || currentToken.clase == (CHAR) || currentToken.clase == (DOUBLE) || currentToken.clase == (VOID)){
 			bloque();
 		}
+		
 		if(currentToken.clase == (IF)){
 			eat(currentToken.clase);
 			if(currentToken.clase == (PA)){
@@ -478,7 +469,7 @@ public class Parser{
 				if(currentToken.clase == (PC)){
 					eat(currentToken.clase);
 					sentencia();
-					sentenciaP();
+					sentenciaPP();
 				}else{
 					error();
 				}
@@ -486,6 +477,7 @@ public class Parser{
 				error();
 			}
 		}
+		
 		if(currentToken.clase == (DO)){
 			eat(currentToken.clase);
 			sentencia();
@@ -496,7 +488,6 @@ public class Parser{
 					bool();
 					if(currentToken.clase == (PC)){
 						eat(currentToken.clase);
-						
 					}else{
 						error();
 					}
@@ -507,6 +498,7 @@ public class Parser{
 				error();
 			}			
 		}
+		
 		if(currentToken.clase == BREAK){
 			eat(currentToken.clase);
 			if(currentToken.clase  == PCOMA){
@@ -515,6 +507,7 @@ public class Parser{
 				error();
 			}
 		}
+		
 		if(currentToken.clase == SWITCH){
 			eat(currentToken.clase);
 			if(currentToken.clase == (PA)){
@@ -536,12 +529,28 @@ public class Parser{
 				}
 			}else{
 				error();
-			}
-			
+			}	
 		}
-		
+
+		if(currentToken.clase == RETURN){
+			eat(currentToken.clase);
+			sentenciaP();
+		}
 	}
+	
 	public  void sentenciaP() throws IOException{
+		if(currentToken.clase == (PCOMA)){
+			eat(currentToken.clase);
+		}else{
+			exp();
+			if(currentToken.clase == (PCOMA)){
+				eat(currentToken.clase);
+			}else{
+				error();
+			}
+		}
+	}
+	public  void sentenciaPP() throws IOException{
 		if(currentToken.clase == (ELSE)){
 			eat(currentToken.clase);
 			sentencia();
