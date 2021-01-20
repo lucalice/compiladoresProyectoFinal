@@ -1,127 +1,157 @@
-public static final int VER = 1000;
-public static final int FAL = 1001;
-public static final int ELSE = 1002;
-public static final int WHILE = 1003;
-public static final int FUNC = 1004;
-public static final int DO = 1005;
-public static final int IF = 1006;
-public static final int SWITCH = 1007;
-public static final int CASE = 1008;
-public static final int DEFAULT = 1009;
-public static final int FOR = 1010;
-public static final int RETURN = 1011;
-public static final int BREAK = 1012;
-public static final int CONTINUE = 1013;
-public static final int ID = 1014;
-public static final int INT = 1015;
-public static final int FLOAT = 1016;
-public static final int CHAR = 1017;
-public static final int DOUBLE = 1018;
-public static final int VOID = 1019;
-public static final int FUNC = 1020;
-public static final int PA = 1021;
-public static final int PI = 1022;
-public static final int IGUAL = 1023;
-public static final int SUMA = 1024;
-public static final int RESTA = 1025;
-public static final int MULTI = 1026;
-public static final int DIVI = 1027;
-public static final int MOD = 1028;
-public static final int INCREMENTO = 1029;
-public static final int OR = 1030;
-public static final int AND = 1031;
-public static final int IGUALQ = 1032;
-public static final int DIFEQ = 1033;
-public static final int MENOR = 1034;
-public static final int MAYOR = 1035;
-public static final int MENORIGUAL = 1036;
-public static final int MAYORIGUAL = 1037;
-public static final int PCOMA = 1038;
-public static final int DOSPU = 1039;
-public static final int COMA = 1040;
-public static final int CA = 1041;
-public static final int CC = 1042;
-public static final int NUMERO = 1043;
-public static final int CADENA = 1044;
-public static final int LLAVED = 1045;
-public static final int LLAVEI = 1046;
+import java.util.Stack;
+import java.io.IOException;
 public class Parser{
 	
-	private Yylex lexer;
+	public  final int VER = 1000;
+	public  final int FAL = 1001;
+	public  final int ELSE = 1002;
+	public  final int WHILE = 1003;
+	public  final int FUNC = 1004;
+	public  final int DO = 1005;
+	public  final int IF = 1006;
+	public  final int SWITCH = 1007;
+	public  final int CASE = 1008;
+	public  final int DEFAULT = 1009;
+	public  final int FOR = 1010;
+	public  final int RETURN = 1011;
+	public  final int BREAK = 1012;
+	public  final int CONTINUE = 1013;
+	public  final int ID = 1014;
+	public  final int INT = 1015;
+	public  final int FLOAT = 1016;
+	public  final int CHAR = 1017;
+	public  final int DOUBLE = 1018;
+	public  final int VOID = 1019;
+	public  final int PA = 1020;
+	public  final int PC = 1021;
+	public  final int IGUAL = 1022;
+	public  final int SUMA = 1023;
+	public  final int RESTA = 1024;
+	public  final int MULTI = 1025;
+	public  final int DIVI = 1026;
+	public  final int MOD = 1027;
+	public  final int INCREMENTO = 1028;
+	public  final int OR = 1029;
+	public  final int AND = 1039;
+	public  final int IGUALQ = 1031;
+	public  final int DIFEQ = 1032;
+	public  final int MENOR = 1033;
+	public  final int MAYOR = 1034;
+	public  final int MENORIGUAL = 1035;
+	public  final int MAYORIGUAL = 1036;
+	public  final int PCOMA = 1037;
+	public  final int DOSPU = 1038;
+	public  final int COMA = 1039;
+	public  final int CA = 1040;
+	public  final int CC = 1041;
+	public  final int NUMERO = 1042;
+	public  final int CADENA = 1043;
+	public  final int LLAVED = 1044;
+	public  final int LLAVEI = 1045;
+	public  final int DIFUNI = 1046;
+
+	private  Yylex lexer;
 	Token currentToken;
+    
+	public  void init() throws IOException{
+		currentToken = lexer.yylex();
+	}
 	
-	public Parser(Yylex lexer) throws IOException{
-		this.lexer = lexer;
-	}
-	public void init(){
-		this.currentToken = lexer.yylex()	
-	}
-	public Parser(Yylex lexer) throws IOException{
+	public Parser(Yylex lexer){
 		this.lexer = lexer;
 	}
 	
-	public void error(mensaje) throws IOException{
-		System.out,println(mensaje);
+	public  void error(String mensaje) {
+		System.out.println(mensaje);
 	}
 
-	public void eat(int value) throws IOException{
-		if(currentToken.equals(value)){
+	public  void error() {
+		System.out.println("Error de sintaxis 2");
+	}
+
+	public  void eat(int value){
+		try {
+		    if(currentToken.clase == value){
+			currentToken=lexer.yylex();
+			System.out.println("Me comí un"+currentToken.clase);    
+		    }else{
+			error("Error de sintaxis 1");
+			currentToken.clase=0;
+			currentToken.valor=" ";
+		    }
+        	} catch (IOException e) {
+            		System.out.println("Cambiate a conta. :P");
+        	}
+    	}
+    
+    	/*public  void eat(Token currentToken) throws IOException{
+		if(currentToken.clase.equals(currentToken)){
 			currentToken=lexer.yylex();
 		}else{
 			error("Error de sintaxis");
 		}
-	}
-	public static void programa() throws IOException{
+	}*/
+	public  void programa() throws IOException{
 		declaraciones();
 		funciones();
 	}
-	public static void declaraciones() throws IOException{
-		tipo();
+	public  void declaraciones() throws IOException{
+       		tipo();
 		lista_var();
 		eat(PCOMA);
 		declaraciones();
 	}
 
-	public static void tipo(){
+	public  void tipo(){
 		basico();
 		compuesto();
 	}
 
-	public static void basico(){
-		if(currentToken.equals(INT)){
+	public  void basico(){
+		if(currentToken.clase == (INT)){
 			eat(INT);
-		}else if(currentToken.equals(FLOAT)){
+		}else if(currentToken.clase == (FLOAT)){
 			eat(FLOAT);
-		}else if(currentToken.equals(CHAR)){
+		}else if(currentToken.clase == (CHAR)){
 			eat(CHAR);
-		}else if(currentToken.equals(DOUBLE)){
+		}else if(currentToken.clase == (DOUBLE)){
 			eat(DOUBLE);
-		}else if(currentToken.equals(VOID)){
+		}else if(currentToken.clase == (VOID)){
 			eat(VOID);
 		}else{
-			System.out.println("Error de sintaxis");
+			System.out.println("Error de sintaxis. Se esperaba un "+currentToken.clase+" tenemos :" +currentToken.valor);
 		}
 	}
 
-	public static void compuesto(){
-		eat(CA);
-		eat(NUMERO);
-		eat(CC);
-		compuesto();
+	public  void compuesto(){
+        if(currentToken.clase == CA){
+            eat(CA);
+            if(currentToken.clase == NUMERO){
+                eat(NUMERO);
+                if(currentToken.clase == CA){
+                    eat(CC);
+                    compuesto();
+                }
+            }
+		
+        }
 	}
 
-	public static void lista_var(){
-		eat(ID);
-		lista_varPrima();
+	public  void lista_var(){
+        eat(ID);
+        lista_varPrima();
+        System.out.println("Hola vato");
 	}
 
-	public static void lista_varPrima(){
-		eat(COMA);
-		eat(ID);
-		lista_varPrima();
+	public  void lista_varPrima(){
+		if(currentToken.clase == COMA){
+            eat(COMA);
+            eat(ID);
+            lista_varPrima();
+        }
 	}
 
-	public static void funciones(){
+	public  void funciones(){
 		eat(FUNC);
 		eat(ID);
 		eat(CA);
@@ -129,9 +159,7 @@ public class Parser{
 		eat(CC);
 	}
 
-
-
-  	public static void predeterminado()throws IOException{
+  	public  void predeterminado()throws IOException{
   		
 		eat(DEFAULT);
 		eat(DOSPU);
@@ -139,109 +167,115 @@ public class Parser{
 			
   	}
 
-	public static void bool()throws IOException{
-  		comp();
+	public  void bool()throws IOException{
+  		comb();
   		boolP();
-    }
-  	public static void boolP()throws IOException{
-  		eat(OR)
+	}
+  	
+	public  void boolP()throws IOException{
+  		eat(OR);
 	  	comb();
 	  	boolP();
   		
   	}
-  	public static void comb()throws IOException{
+  	
+	public  void comb()throws IOException{
 		igualdad();
 		combP();
 	}
-	public static void combP()throws IOException{
-			eat(AND);
-	  		igualdad();
-	  		combP();
+	
+	public  void combP()throws IOException{
+		eat(AND);
+		igualdad();
+		combP();
   		
 	}
 
-	public static void igualdad() throws IOException{
+	public  void igualdad() throws IOException{
 		rel();
 		igualdadPP();
 	}
 
-	public static void igualdadPP() throws IOException{
+	public  void igualdadPP() throws IOException{
 		igualdadP();
 		igualdadPP();
 	}
 
-	public static void igualdadP() throws IOException{
-		if(currentToken.equals(IGUALQ)){
+	public  void igualdadP() throws IOException{
+		if(currentToken.clase == (IGUALQ)){
 	  		eat(IGUALQ);
 	  		rel();
-  		}else if (currentToken.equals(DIFEQ)) {
+  		}else if (currentToken.clase == (DIFEQ)) {
   			eat(DIFEQ);
   			rel();
   		}
 	}
 
-	public static void rel() throws IOException{
+	public  void rel() throws IOException{
 		exp();
 		relP();
 	}
 
-	public static void relP() throws IOException{
-		if(currentToken.equals(MENOR)){
+	public  void relP() throws IOException{
+		if(currentToken.clase == (MENOR)){
 	  		eat(MENOR);
 	  		exp();
-  		}else if (currentToken.equals(MENORIGUAL)) {
+  		}else if (currentToken.clase == (MENORIGUAL)) {
   			eat(MENORIGUAL);
   			exp();
-  		}else if (currentToken.equals(MAYORIGUAL)) {
+  		}else if (currentToken.clase == (MAYORIGUAL)) {
   			eat(MAYORIGUAL);
   			exp();
-  		}else if (currentToken.equals(MAYOR)) {
+  		}else if (currentToken.clase == (MAYOR)) {
   			eat(MAYOR);
   			exp();
   		}
  	 }
-  	public static void exp() throws IOException{
+	
+  	public  void exp() throws IOException{
   		term();
   		expPP();
   	}
-  	public static void expPP() throws IOException{
+	
+  	public  void expPP() throws IOException{
   		expP();
   		expPP();
   	}
-  	public static void expP() throws IOException{
-  		if(currentToken.equals(SUMA)){
+	
+  	public  void expP() throws IOException{
+  		if(currentToken.clase == (SUMA)){
 	  		eat(SUMA);
 	  		term();
-  		}else if (currentToken.equals(RESTA)) {
-  			eat(RESTA)
+  		}else if (currentToken.clase == (RESTA)) {
+  			eat(RESTA);
   			term();
   		}
 	}
-	public static term() throws IOException{
-        unario();
-        ter();
-    }
-    public static ter() throws IOException{
-        if(currentToken.equals(MULTI)){
-            currentToken=lexer.yylex();
-            unario();
-            ter();
-        } else if(currentToken.equals(DIVI)){
-            currentToken=lexer.yylex();
-            unario();
-            ter();
-        }else if(currentToken.equals(MOD)){
-            currentToken=lexer.yylex();
-            unario();
-            ter();
-        }
+	public  void term() throws IOException{
+        	unario();
+        	ter();
+    	}
+    	public  void ter() throws IOException{
+		if(currentToken.clase == (MULTI)){
+	    		currentToken=lexer.yylex();
+			unario();
+			ter();
+		} else if(currentToken.clase == (DIVI)){
+			currentToken=lexer.yylex();
+			unario();
+		   	ter();
+		}else if(currentToken.clase == (MOD)){
+		   	currentToken=lexer.yylex();
+		   	unario();
+		   	ter();
+		}
     }
 
-    public static unario() throws IOException{
-        if(currentToken.equals(DIFUNI)){
+    public  void unario() throws IOException{
+        if(currentToken.clase == (DIFUNI)){
             currentToken=lexer.yylex();
             unario();
-        } else if(CurrentToken.equals(RESTA)){
+        } else if(currentToken.clase == (RESTA)){
             currentToken=lexer.yylex();
             unario();
         }else{
@@ -249,26 +283,26 @@ public class Parser{
         }
     }
 
-    public static factor() throws IOException{
-        if(currentToken.equals(CA)){
-            CurrentToken=lexer.yylex();
+    public  void factor() throws IOException{
+        if(currentToken.clase == (CA)){
+            currentToken=lexer.yylex();
             bool();
-            if(currentToken.equals(CC)){
+            if(currentToken.clase == (CC)){
                 currentToken=lexer.yylex();
-            }else if(currentToken.equals(NUMERO)){
+            }else if(currentToken.clase == (NUMERO)){
                 currentToken=lexer.yylex();
-            }else if(currentToken.equals(CADENA)){
+            }else if(currentToken.clase == (CADENA)){
                 currentToken=lexer.yylex();
-            }else if(currentToken.equals(VER)){
+            }else if(currentToken.clase == (VER)){
                 currentToken=lexer.yylex();
-            }else if(currentToken.equals(FAL)){
+            }else if(currentToken.clase == (FAL)){
                 currentToken=lexer.yylex();
-            }else if(currentToken.equals(ID)){
+            }else if(currentToken.clase == (ID)){
                 currentToken=lexer.yylex();
-                if(currentToken.equals(CA)){
+                if(currentToken.clase == (CA)){
                     currentToken=lexer.yylex();
                     parametros();
-                    if(currentToken.equals(CC)){
+                    if(currentToken.clase == (CC)){
                         currentToken=lexer.yylex();
                     }
                 }
@@ -278,63 +312,67 @@ public class Parser{
         }
     }
 
-    public static parametros() throws IOException{
+    public  void parametros() throws IOException{
         listparam();
     }
 
-    public static listparam() throws IOException{
+    public  void listparam() throws IOException{
         bool();
         lispar();
     }
 
-    public static lispar() throws IOException{
-       if(currentToken.equals(COMA)){
+    public  void lispar() throws IOException{
+       if(currentToken.clase == (COMA)){
             currentToken=lexer.yylex();
             bool();
             lispar();
         }
     }
 
-    public static localizacion() throws IOException{
-        if(currentToken.equals(ID)){
+    public  void localizacion() throws IOException{
+        if(currentToken.clase == (ID)){
             currentToken=lexer.yylex();
             local();
         }
     }
 
-    public static local() throws IOException{
-        if(currentToken.equals(CA)){
+    public  void local() throws IOException{
+        if(currentToken.clase == (CA)){
             currentToken=lexer.yylex();
             bool();
-            if(currentToken.equals(CC)){
+            if(currentToken.clase == (CC)){
                 currentToken=lexer.yylex();
                 local();
             }
-    }  
+		}
+	}  
 	    
 //8 - 14
-	public void argumentos(Stack args)throws IOException{
-		if(args != nule){
+	public  void argumentos(){
+    //public  void argumentos(Stack args)throws IOException{
+		/*if(args != null){
 			list_args(args);
-		}
+        }*/
+        lista_args();
 	}
 	
-	public void list_args(Stack args) throws IOException{
+	public  void lista_args(){
+    //public  void list_args(Stack args) throws IOException{
 		tipo();
-		if(currentToken.equals(ID)){
-			eat(currentToken);
+		if(currentToken.clase == (ID)){
+			eat(currentToken.clase);
 			lista_argsP();
 		}else{
 			error();
 		}
 	}
 	
-	public void lista_argsP() throws IOException{
-		if (currentToken.equals(COMA)){
-			eat(CurrentToken);
+	public  void lista_argsP() {
+		if (currentToken.clase == (COMA)){
+			eat(currentToken.clase);
 			tipo();
-			if(currentToken.equals(ID)){
-				eat(CurrentToken);
+			if(currentToken.clase == (ID)){
+				eat(currentToken.clase);
 				lista_argsP();
 			}else{
 				error();
@@ -342,48 +380,48 @@ public class Parser{
 		}
 	}
 	
-	public void bloque() throws IOException{
+	public  void bloque() throws IOException{
 		declaraciones();
 		instrucciones();
 	}
 	
-	public void instrucciones() throws IOException{
+	public  void instrucciones() throws IOException{
 		sentencia();
-		if (currentToken == 1002){
+		if (currentToken.clase == 1002){
 			instruccionesP();
 		}else{
 			error();
 		}
 	}
 	
-	public void instruccionesP() throws IOException{		
-		if(currentToken.equals(WHILE) || currentToken.equals(SWITCH) || currentToken.equals(IF) || currentToken.equals(CASE) || currentToken.equals(DO)){
-			eat(currentToken)
+	public  void instruccionesP() throws IOException{		
+		if(currentToken.clase == (WHILE) || currentToken.clase == (SWITCH) || currentToken.clase == (IF) || currentToken.clase == (CASE) || currentToken.clase == (DO)){
+			eat(currentToken.clase);
 			sentencia();
 			instruccionesP();
 		}
-		if(currentToken.equals(ID) || currentToken.equals(PA)){
-			eat(currentToken);
+		if(currentToken.clase == (ID) || currentToken.clase == (PA)){
+			eat(currentToken.clase);
 			sentencia();
 			instruccionesP();
 		}
-		if(currentToken.equals(INT) || currentToken.equals(FLOAT) || currentToken.equals(CHAR) || currentToken.equals(DOUBLE) || currentToken.equals(VOID)){
-			eat(currentToken);
+		if(currentToken.clase == (INT) || currentToken.clase == (FLOAT) || currentToken.clase == (CHAR) || currentToken.clase == (DOUBLE) || currentToken.clase == (VOID)){
+			eat(currentToken.clase);
 			sentencia();
 			instruccionesP();
 		}
 	}
 	
-	public void sentencia() throws IOException{
-		if(currentToken.equals(ID) || currentToken.equals(PA)){
+	public  void sentencia() throws IOException{
+		if(currentToken.clase == (ID) || currentToken.clase == (PA)){
 			localizacion();
-			if (currentToken.equals(IGUAL)){
-				eat(currentToken);
-				if (currentToken.equals(LLAVED)){
-					eat(currentToken);
+			if (currentToken.clase == (IGUAL)){
+				eat(currentToken.clase);
+				if (currentToken.clase == (LLAVED)){
+					eat(currentToken.clase);
 					bool();
-					if (currentToken.equals(LLAVEI)){
-						eat(currentToken);
+					if (currentToken.clase == (LLAVEI)){
+						eat(currentToken.clase);
 					}else{
 						error();
 					}
@@ -395,16 +433,16 @@ public class Parser{
 						error();
 					}
 		}
-		if(currentToken.equals(INT) || currentToken.equals(FLOAT) || currentToken.equals(CHAR) || currentToken.equals(DOUBLE) || currentToken.equals(VOID)){
+		if(currentToken.clase == (INT) || currentToken.clase == (FLOAT) || currentToken.clase == (CHAR) || currentToken.clase == (DOUBLE) || currentToken.clase == (VOID)){
 			bloque();
 		}
-		if(currentToken.equals(IF)){
-			eat(currentToken);
-			if(currentToken.equals(PA)){
-				eat(currentToken);
+		if(currentToken.clase == (IF)){
+			eat(currentToken.clase);
+			if(currentToken.clase == (PA)){
+				eat(currentToken.clase);
 				bool();
-				if(currentToken.equals(PI)){
-					eat(currentToken);
+				if(currentToken.clase == (PC)){
+					eat(currentToken.clase);
 					sentencia();
 					sentenciaP();
 				}else{
@@ -414,16 +452,16 @@ public class Parser{
 				error();
 			}
 		}
-		if(currentToken.equals(DO)){
-			eat(currentToken);
+		if(currentToken.clase == (DO)){
+			eat(currentToken.clase);
 			sentencia();
-			if(correntToken.equals(WHILE)){
-				eat(currentToken);
-				if(correntToken.equals(PA)){
-					eat(currentToken);
+			if(currentToken.clase == (WHILE)){
+				eat(currentToken.clase);
+				if(currentToken.clase == (PA)){
+					eat(currentToken.clase);
 					bool();
-					if(currentToken.equals(PI)){
-						eat(currentToken);
+					if(currentToken.clase == (PC)){
+						eat(currentToken.clase);
 						
 					}else{
 						error();
@@ -435,62 +473,62 @@ public class Parser{
 				error();
 			}			
 		}
-		if(currentToken(BREAK)){
-			eat(currentToken);
-			if(currentToken.equals(PCOMA)){
-				eat(currentToken);
+		if(currentToken.clase == BREAK){
+			eat(currentToken.clase);
+			if(currentToken.clase  == PCOMA){
+				eat(currentToken.clase);
 			}else{
 				error();
 			}
 		}
-		if(currentToken.equals(SWITCH)){
-			eat(currentToken);
-			if(currentToken.equals(PA)){
-				eat(currentToken);
+		if(currentToken.clase == SWITCH){
+			eat(currentToken.clase);
+			if(currentToken.clase == (PA)){
+				eat(currentToken.clase);
 				bool();
-				if(currentToken.equals(PI)){
-					eat(currentToken);
-					if(currentToken.equals(LLAVED)){
-						eat(currentToken);
+				if(currentToken.clase == (PC)){
+					eat(currentToken.clase);
+					if(currentToken.clase == (LLAVED)){
+						eat(currentToken.clase);
 						casos();
-						if(currentToken.equals(LLAVEI)){
-							eat(currentToken);
+						if(currentToken.clase == (LLAVEI)){
+							eat(currentToken.clase);
 						}else{
 							error();
 						}
-					}else(
+					}else{
 						error();
-					)
+					}
 				}
 			}else{
-				error
+				error();
 			}
 			
 		}
 		
 	}
-	public void sentenciaP() throws IOException{
-		if(currentToken.equals(ELSE)){
-			eat(currentToken);
+	public  void sentenciaP() throws IOException{
+		if(currentToken.clase == (ELSE)){
+			eat(currentToken.clase);
 			sentencia();
 		}
 	}
-	public void casos() throws IOException{
-		if(currentToken.equals(CASE)){
+	public  void casos() throws IOException{
+		if(currentToken.clase == (CASE)){
 			caso();
 			casos();
 		}
-		if(currentToken.equals(DEFAULT)){
+		if(currentToken.clase == (DEFAULT)){
 			predeterminado();
 		}
 	}
-	public void caso() throws IOException{
-		if(currentToken.equals(CASE)){
-			eat(currentToken);
-			if(currentToken.equals(NUMERO)){
-				eat(currentToken);
-				if(currentToken.equals(DOSPU)){
-					eat(currentToken);
+	public  void caso() throws IOException{
+		if(currentToken.clase == (CASE)){
+			eat(currentToken.clase);
+			if(currentToken.clase == (NUMERO)){
+				eat(currentToken.clase);
+				if(currentToken.clase == (DOSPU)){
+					eat(currentToken.clase);
 					instrucciones();
 				}else{
 					error();
