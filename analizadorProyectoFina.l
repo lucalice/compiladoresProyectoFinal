@@ -16,6 +16,9 @@ import java.io.IOException;
 %column
 %unicode
 %type Token
+%eof{
+	new Token(0, "EOF");
+%eof}
 %{
 
 	Parser par;
@@ -125,7 +128,7 @@ id=({letra}|_)+({num}|{letra}|_)*
 {igualque} {return new Token(1031," == ");}
 {diferenteque} {return new Token(1032," !=");}
 {menor} {return new Token(1033," < ");}
-{mayor} {return new Token(1028," > ");}
+{mayor} {return new Token(1034," > ");}
 {menorigual} {return new Token(1035," <= ");}
 {mayorigual} {return new Token(1036," >= ");}
 {puntocoma} {return new Token(1037," ; ");}
@@ -140,7 +143,5 @@ id=({letra}|_)+({num}|{letra}|_)*
 {diferenteuni} {return new Token(1046,"diferenteuni");}
 {esps} {/*El analizador ignora*/}
 {id} { return new Token(1014,"id");}
-. { System.out.println("Error al identificar token");
-	return new Token(1047,"EOF");}
-
+. { System.out.println("Error al identificar token");}
 
