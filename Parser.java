@@ -73,7 +73,6 @@ public class Parser{
 	public  void eat(int value){
 		try {
             if(currentToken.clase == value){
-                System.out.println("Me comí un "+currentToken.clase+" = "+currentToken.valor);    
                 currentToken=lexer.yylex();
             }else{
                 error("Error de sintaxis 1 "+currentToken.valor);
@@ -198,10 +197,11 @@ public class Parser{
   		boolP();
     }
   	public  void boolP()throws IOException{
-  		eat(OR);
-	  	comb();
-	  	boolP();
-  		
+  		if(currentToken.clase == OR){
+            eat(OR);
+            comb();
+            boolP();
+        }
   	}
   	public  void comb()throws IOException{
 		igualdad();
@@ -273,15 +273,15 @@ public class Parser{
     }
     public  void ter() throws IOException{
         if(currentToken.clase == (MULTI)){
-            currentToken=lexer.yylex();
+            eat(MULTI);
             unario();
             ter();
         } else if(currentToken.clase == (DIVI)){
-            currentToken=lexer.yylex();
+            eat(DIVI);
             unario();
             ter();
         }else if(currentToken.clase == (MOD)){
-            currentToken=lexer.yylex();
+            eat(MOD);
             unario();
             ter();
         }
@@ -300,13 +300,11 @@ public class Parser{
     }
 
     public  void factor() throws IOException{
-        System.out.println("Entre a factor");
         if(currentToken.clase == (PA)){
             eat(PA);
             bool();
             eat(PC);
-        }
-        if(currentToken.clase == (NUMERO)){
+        }else if(currentToken.clase == (NUMERO)){
             eat(NUMERO);
         }else if(currentToken.clase == (CADENA)){
             eat(CADENA);
@@ -316,14 +314,16 @@ public class Parser{
             eat(FAL);
         }else if(currentToken.clase == (ID)){
             eat(ID);
-            eat(PA);
-            parametros();
-            if(currentToken.clase == (PC)){
-                eat(PC);
+            if(currentToken.clase == PA){
+                eat(PA);
+                parametros();
+                if(currentToken.clase == (PC)){
+                    eat(PC);
+                }
+            }else{
+                localizacion();
             }
-        } else{
-            System.out.println("Entraré a localización.");
-            localizacion();
+            
         }
     }
 
@@ -345,8 +345,6 @@ public class Parser{
     }
 
     public  void localizacion() throws IOException{
-        System.out.println("Entré a localización");
-        System.out.println(currentToken.clase);
         if(currentToken.clase == (ID)){
             eat(ID);
             local();
@@ -441,7 +439,13 @@ public class Parser{
             localizacion();
 			if (currentToken.clase == IGUAL){
                 eat(IGUAL);
-				bool();				
+                bool();
+                System.out.println(currentToken.clase);
+                if(currentToken.clase == PCOMA){
+                    eat(PCOMA);
+                }else{
+                    error();
+                }
 			}else{
 				error();
 			}
