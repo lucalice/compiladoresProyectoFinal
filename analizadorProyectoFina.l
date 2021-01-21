@@ -94,6 +94,7 @@ diferenteuni = "!"
 id=({letra}|_)+({num}|{letra}|_)*
 
 %%
+
 {verdadero} {return new Token(1000,"true");}
 {falso} {return new Token(1001,"false");}
 {else}  {return new Token(1002,"else");}
@@ -109,15 +110,10 @@ id=({letra}|_)+({num}|{letra}|_)*
 {break} { return new Token(1012,"break");}
 {continue} { return new Token(1013,"continue");}
 
-{int} {return new Token(1015,"int");}
-{float} {return new Token(1016,"float");}
-{char} {return new Token(1017,"char");}
-{double} {return new Token(1018,"double");}
-{void} {return new Token(1019, "void");}
 {pa} {return new Token(1020, "(");}
-{pc} {return new Token(1021, ")");} 
-{igual} {return new Token(1022, "=");}
-{suma} {return new Token(1023, "=");}
+{pc} {return new Token(1021, ")");}
+{igual} {return new Token(1022, "=");} 
+{suma} {return new Token(1023, "+");}
 {resta} {return new Token(1024, "-");}
 {multi} {return new Token(1025, "*");}
 {divi} {return new Token(1026, "/");}
@@ -142,6 +138,10 @@ id=({letra}|_)+({num}|{letra}|_)*
 {llaved} {return new Token(1045,"}");}
 {diferenteuni} {return new Token(1046,"diferenteuni");}
 {esps} {/*El analizador ignora*/}
+{int} {return new Token(1015,"int");}
+{float} {return new Token(1016,"float");}
+{char} {return new Token(1017,"char");}
+{double} {return new Token(1018,"double");}
+{void} {return new Token(1019, "void");}
 {id} { return new Token(1014,"id");}
 . { System.out.println("Error al identificar token");}
-
