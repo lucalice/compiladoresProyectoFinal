@@ -45,7 +45,7 @@ espacio = [ \t\tn\n]
 esps={espacio}+
 entero=({num})+(_?({num})+)*
 flotante = ( {entero} . {entero}? ({exp})? {entero}? ) | ( {entero}? . {entero}? ({exp})? {entero} )
-numero=flotante
+numero = {flotante} | {entero}
 cadena = ( "\"" ({letra} | {num} | {secEsc} | {sigEsp})* "\"" | "\‘" ({letra} | {num} | {secEsc} | {sigEsp})*  "\‘"  )
 verdadero = true
 falso = false
@@ -144,4 +144,5 @@ id=({letra}|_)+({num}|{letra}|_)*
 {double} {return new Token(1018,"double");}
 {void} {return new Token(1019, "void");}
 {id} { return new Token(1014,"id");}
+{num} {return new Token(1047,"num");}
 . { System.out.println("Error al identificar token");}
