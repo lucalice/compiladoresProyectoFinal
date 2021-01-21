@@ -385,7 +385,6 @@ class Yylex {
   private boolean zzAtBOL = true;
 
   /** Whether the user-EOF-code has already been executed. */
-  @SuppressWarnings("unused")
   private boolean zzEOFDone;
 
   /* user code: */
@@ -649,6 +648,19 @@ class Yylex {
   }
 
 
+  /**
+   * Contains user EOF-code, which will be executed exactly once,
+   * when the end of file is reached
+   */
+  private void zzDoEOF() {
+    if (!zzEOFDone) {
+      zzEOFDone = true;
+    
+	new Token(0, "EOF");
+    }
+  }
+
+
 
 
   /**
@@ -796,13 +808,13 @@ class Yylex {
 
       if (zzInput == YYEOF && zzStartRead == zzCurrentPos) {
         zzAtEOF = true;
+            zzDoEOF();
         return null;
       }
       else {
         switch (zzAction < 0 ? zzAction : ZZ_ACTION[zzAction]) {
           case 1:
             { System.out.println("Error al identificar token");
-	return new Token(1047,"EOF");
             }
             // fall through
           case 50: break;
@@ -837,7 +849,7 @@ class Yylex {
             // fall through
           case 56: break;
           case 8:
-            { return new Token(1023, "=");
+            { return new Token(1023, "+");
             }
             // fall through
           case 57: break;
@@ -877,7 +889,7 @@ class Yylex {
             // fall through
           case 64: break;
           case 16:
-            { return new Token(1028," > ");
+            { return new Token(1034," > ");
             }
             // fall through
           case 65: break;
