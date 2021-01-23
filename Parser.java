@@ -33,7 +33,7 @@ public class Parser{
 	public final int MOD = 1027;
 	public final int INCREMENTO = 1028;
 	public final int OR = 1029;
-	public final int AND = 1039;
+	public final int AND = 1030;
 	public final int IGUALQ = 1031;
 	public final int DIFEQ = 1032;
 	public final int MENOR = 1033;
@@ -62,7 +62,7 @@ public class Parser{
 		this.lexer = lexer;
     }
 	
-	public  void error(String mensaje) {
+	public void error(String mensaje) {
 		System.out.println(mensaje);
 	}
 
@@ -73,6 +73,7 @@ public class Parser{
 	public  void eat(int value){
 		try {
             if(currentToken.clase == value){
+                System.out.println("Me comí "+currentToken.clase+" con valor: "+currentToken.valor);
                 currentToken=lexer.yylex();
             }else{
                 error("Error de sintaxis 1 "+currentToken.valor);
@@ -126,7 +127,7 @@ public class Parser{
 	}
 
 	public  void tipo(){
-		basico();
+        basico();
 		compuesto();
 	}
 
@@ -151,11 +152,11 @@ public class Parser{
             eat(CA);
             if(currentToken.clase == NUMERO){
                 eat(NUMERO);
-                if(currentToken.clase == CA){
+                if(currentToken.clase == CC){
                     eat(CC);
-                    compuesto();
                 }
             }
+            compuesto();
         }
 	}
 
@@ -411,36 +412,29 @@ public class Parser{
 	
 	public  void instrucciones() throws IOException{
         sentencia();
-        System.out.println("Si jalé.");
 		instruccionesP();
 	}
 	
 	public  void instruccionesP() throws IOException{		
 		if(currentToken.clase == (IF) || currentToken.clase == (WHILE) || currentToken.clase == (SWITCH) || currentToken.clase == (DO) || currentToken.clase == (RETURN) || currentToken.clase == (BREAK)){
-            System.out.println("Primero.");
-            eat(currentToken.clase);
 			sentencia();
 			instruccionesP();
 		}else if(currentToken.clase == (ID) || currentToken.clase == (CA)){
-            System.out.println("Primero 2.");
-            eat(currentToken.clase);
 			sentencia();
 			instruccionesP();
 		}else if(currentToken.clase == LLAVEI){
-            System.out.println("Primero 3.");
-			eat(currentToken.clase);
 			sentencia();
 			instruccionesP();
         }
 	}
 	
 	public  void sentencia() throws IOException{
+        System.out.println("Entré a sentencia.");
         if(currentToken.clase == (ID) || currentToken.clase == (PA)){
             localizacion();
 			if (currentToken.clase == IGUAL){
                 eat(IGUAL);
                 bool();
-                System.out.println(currentToken.clase);
                 if(currentToken.clase == PCOMA){
                     eat(PCOMA);
                 }else{
@@ -456,7 +450,8 @@ public class Parser{
 		}
 		
 		if(currentToken.clase == (IF)){
-			eat(currentToken.clase);
+            eat(currentToken.clase);
+            System.out.println(currentToken.clase);
 			if(currentToken.clase == (PA)){
 				eat(currentToken.clase);
 				bool();
@@ -529,7 +524,16 @@ public class Parser{
 		if(currentToken.clase == RETURN){
 			eat(currentToken.clase);
 			sentenciaP();
-		}
+        }
+        if(currentToken.clase == WHILE){
+            eat(WHILE);
+            if(currentToken.clase == PA){
+                eat(PA);
+                bool();
+                eat(PC);
+                sentencia();
+            }
+        }
 	}
 	
 	public  void sentenciaP() throws IOException{
