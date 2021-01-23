@@ -1,7 +1,7 @@
 //Nombre: Carranza Escobar Luis Enrique 315286513
-//Nombre:
-//Nombre:
-//Nombre:
+//Nombre: 
+//Nombre: 
+//Nombre: 
 
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
@@ -15,25 +15,30 @@ import java.io.IOException;
 %char
 %column
 %unicode
-%type Token
-%eof{
-	new Token(0, "EOF");
-%eof}
+%type Integer
 %{
 
-	Parser par;
+	public static void main(String [] arg) throws FileNotFoundException, IOException{ 
 
-	public Token nextToken(String lex, int num){
-		return new Token(num, lex);
-	}
+	
+        //Esto lo debemos poner en un archivo main.
+        FileReader f = new FileReader(arg[0]);
+        BufferedReader b = new BufferedReader(f);
 
-	public Token nextToken(String lex, int num, int tipo){
-		return new Token(num, lex, tipo);
-	}
-
-	public void initPar(Parser par){
-		this.par = par;
-	}
+        Yylex lexer = new Yylex(b);
+      try{
+          Integer lexema = lexer.yylex();
+          System.out.println(lexema);
+          while(lexema != null){
+          
+          lexema = lexer.yylex();
+          System.out.println(lexema);
+      }
+          System.out.println();
+      }catch(IOException e){
+          System.out.println("Ocurrio un error al intentar acceder a la consola");
+      }
+ }
 
 %}
 letra = [a-zA-Z]
@@ -43,9 +48,10 @@ sigEsp = ("+"| - | @ | # | \ | "/" | "*" | % | . | , | _ | # | "$" | &)
 secEsc = ( \n | \b | \t | \v | \\ | \f | \’ | \” | \0 | \a | \r | \?)
 espacio = [ \t\tn\n]
 esps={espacio}+
-entero=({num})+(_?({num})+)*
+id=({letra}|_)+({num}|{letra}|_)*
+entero = ({num})+(_?({num})+)*
 flotante = ( {entero} . {entero}? ({exp})? {entero}? ) | ( {entero}? . {entero}? ({exp})? {entero} )
-numero = {flotante} | {entero}
+numero = {entero}
 cadena = ( "\"" ({letra} | {num} | {secEsc} | {sigEsp})* "\"" | "\‘" ({letra} | {num} | {secEsc} | {sigEsp})*  "\‘"  )
 verdadero = true
 falso = false
@@ -91,58 +97,55 @@ cc= "]"
 llavei = "{"
 llaved = "}"
 diferenteuni = "!"
-id=({letra}|_)+({num}|{letra}|_)*
 
 %%
+{verdadero} {return 1;}
+{falso} {return 2;}
+{else}  {return 3;}
+{while} {return 4;}
+{func} {return 5;}
+{do} {return 6;}
+{if} { return 7;}
+{switch} { return 8;}
+{case} { return 9;}
+{default} { return 10;}
+{for} { return 11;}
+{return} { return 12;}
+{break} { return 13;}
+{continue} { return 14;}
+{id} {System.out.println("Hola bro"); return 15;}
+{int} {return 16;}
+{float} {return 17;}
+{char} {return 18;}
+{double} {return 19;}
+{void} {return 20;}
+{pa} {return 21;} 
+{pc} {return 22;}
+{igual} {return 23;}
+{suma} {return 24;}
+{resta} {return 25;}
+{multi} {return 26;}
+{divi} {return 27;}
+{mod} {return 28;}
+{incremento} {return 29;}
+{or} {return 30;}
+{and} {return 31;}
+{igualque} {return 32;}
+{diferenteque} {return 33;}
+{menor} {return 34;}
+{mayor} {return 35;}
+{menorigual} {return 36;}
+{mayorigual} {return 37;}
+{puntocoma} {return 38;}
+{dospuntos} {return 39;}
+{coma} {return 40;}
+{ca} {return 41;}
+{cc} {return 42;}
+{numero} {return 43;}
+{cadena} {return 44;}
 
-{verdadero} {return new Token(1000,"true");}
-{falso} {return new Token(1001,"false");}
-{else}  {return new Token(1002,"else");}
-{while} {return new Token(1003,"while");}
-{func} {return new Token(1004,"func");}
-{do} {return new Token(1005,"do");}
-{if} { return new Token(1006,"if");}
-{switch} { return new Token(1007,"switch");}
-{case} { return new Token(1008,"case");}
-{default} { return new Token(1009,"default");}
-{for} { return new Token(1010,"for");}
-{return} { return new Token(1011,"return");}
-{break} { return new Token(1012,"break");}
-{continue} { return new Token(1013,"continue");}
-
-{pa} {return new Token(1020, "(");}
-{pc} {return new Token(1021, ")");}
-{igual} {return new Token(1022, "=");} 
-{suma} {return new Token(1023, "+");}
-{resta} {return new Token(1024, "-");}
-{multi} {return new Token(1025, "*");}
-{divi} {return new Token(1026, "/");}
-{mod} {return new Token(1027, "%");}
-{incremento} {return new Token(1028,"incremento");}
-{or} {return new Token(1029,"or");}
-{and} {return new Token(1030,"and");}
-{igualque} {return new Token(1031," == ");}
-{diferenteque} {return new Token(1032," !=");}
-{menor} {return new Token(1033," < ");}
-{mayor} {return new Token(1034," > ");}
-{menorigual} {return new Token(1035," <= ");}
-{mayorigual} {return new Token(1036," >= ");}
-{puntocoma} {return new Token(1037," ; ");}
-{dospuntos} {return new Token(1038," : ");}
-{coma} {return new Token(1039," , ");}
-{ca} {return new Token(1040," [ ");}
-{cc} {return new Token(1041," ] ");}
-{numero} {return new Token(1042,"numero");}
-{cadena} {return new Token(1043,"cadena");}
-{llavei} {return new Token(1044,"{");}
-{llaved} {return new Token(1045,"}");}
-{diferenteuni} {return new Token(1046,"diferenteuni");}
 {esps} {/*El analizador ignora*/}
-{int} {return new Token(1015,"int");}
-{float} {return new Token(1016,"float");}
-{char} {return new Token(1017,"char");}
-{double} {return new Token(1018,"double");}
-{void} {return new Token(1019, "void");}
-{id} { return new Token(1014,"id");}
-{num} {return new Token(1047,"num");}
-. { System.out.println("Error al identificar token");}
+. { System.out.println("Error al identificar token");
+	return -1;}
+
+
