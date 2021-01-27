@@ -50,6 +50,9 @@ public class Parser{
 	public final int LLAVEI = 1044;
     public final int LLAVED = 1045;
     public final int DIFUNI = 1046;
+    public final int PRINT = 1048;
+    public final int SCAN = 1049;
+
 
 	private  Yylex lexer;
     Token currentToken;
@@ -67,7 +70,9 @@ public class Parser{
 	}
 
 	public  void error() {
-		System.out.println("Error de sintaxis 2");
+        System.out.println("Error de sintaxis 2");
+        currentToken.clase = -1;
+        currentToken.valor = "EOF";
 	}
 
 	public  void eat(int value){
@@ -76,7 +81,9 @@ public class Parser{
                 System.out.println("Me comí "+currentToken.clase+" con valor: "+currentToken.valor);
                 currentToken=lexer.yylex();
             }else{
-                error("Error de sintaxis 1 "+currentToken.valor);
+                error("Error de sintaxis.");
+                currentToken.clase = -1;
+                currentToken.valor = "EOF";
             }
         } catch (IOException e) {
             System.out.println("Tipo no definido.");
@@ -126,12 +133,12 @@ public class Parser{
 		}
 	}
 
-	public  void tipo(){
+	public  void tipo() throws IOException {
         basico();
 		compuesto();
 	}
 
-	public  void basico(){
+	public  void basico() throws IOException {
 		if(currentToken.clase == (INT)){
             eat(INT);
 		}else if(currentToken.clase == (FLOAT)){
@@ -147,7 +154,7 @@ public class Parser{
 		}
 	}
 
-	public  void compuesto(){
+	public  void compuesto() throws IOException{
         if(currentToken.clase == CA){
             eat(CA);
             if(currentToken.clase == NUMERO){
@@ -160,12 +167,12 @@ public class Parser{
         }
 	}
 
-	public  void lista_var(){
+	public  void lista_var() throws IOException{
         eat(ID);
         lista_varPrima();
 	}
 
-	public  void lista_varPrima(){
+	public  void lista_varPrima() throws IOException{
 		if(currentToken.clase == COMA){
             eat(COMA);
             eat(ID);
@@ -184,7 +191,20 @@ public class Parser{
             bloque();
             funciones();
         }
-	}
+    }
+    
+    public void parteIzquierda() throws IOException{
+        if(currentToken.clase == ID){
+            eat(ID);
+            parteIzquierdaP();
+        }
+    }
+
+    public void parteIzquierdaP() throws IOException{
+        if(currentToken.clase == CA){
+            localizacion();
+        }
+    }
 
   	public  void predeterminado()throws IOException{
         if(currentToken.clase == DEFAULT){
@@ -315,16 +335,19 @@ public class Parser{
             eat(FAL);
         }else if(currentToken.clase == (ID)){
             eat(ID);
-            if(currentToken.clase == PA){
-                eat(PA);
-                parametros();
-                if(currentToken.clase == (PC)){
-                    eat(PC);
-                }
-            }else{
-                localizacion();
-            }
-            
+            factorP();
+        }else if(currentToken.clase == PRINT){
+            exp();
+        }else if(currentToken.clase == SCAN){
+            parteIzquierda();
+        }
+    }
+
+    public void factorP() throws IOException{
+        if(currentToken.clase == CA){
+            localizacion();
+        }else if(currentToken.clase == PA){
+            parametros();
         }
     }
 
@@ -346,8 +369,10 @@ public class Parser{
     }
 
     public  void localizacion() throws IOException{
-        if(currentToken.clase == (ID)){
-            eat(ID);
+        if(currentToken.clase == CA){
+            eat(CA);
+            bool();
+            eat(CC);
             local();
         }
     }
@@ -364,7 +389,7 @@ public class Parser{
 	}  
 	    
 //8 - 14
-	public  void argumentos(){
+	public  void argumentos() throws IOException{
     //public  void argumentos(Stack args)throws IOException{
 		/*if(args != null){
 			list_args(args);
@@ -384,14 +409,14 @@ public class Parser{
 		}
 	}
 	
-	public  void lista_args(){
+	public  void lista_args() throws IOException{
     //public  void list_args(Stack args) throws IOException{
 		tipo();
         eat(ID);
         lista_argsP();
 	}
 	
-	public  void lista_argsP() {
+	public  void lista_argsP() throws IOException {
 		if (currentToken.clase == (COMA)){
 			eat(COMA);
 			tipo();
@@ -416,143 +441,96 @@ public class Parser{
 	}
 	
 	public  void instruccionesP() throws IOException{		
-		if(currentToken.clase == (IF) || currentToken.clase == (WHILE) || currentToken.clase == (SWITCH) || currentToken.clase == (DO) || currentToken.clase == (RETURN) || currentToken.clase == (BREAK)){
-			sentencia();
-			instruccionesP();
-		}else if(currentToken.clase == (ID) || currentToken.clase == (CA)){
-			sentencia();
-			instruccionesP();
-		}else if(currentToken.clase == LLAVEI){
-			sentencia();
-			instruccionesP();
+        if(currentToken.clase == IF || currentToken.clase == WHILE || currentToken.clase == DO || currentToken.clase == IF || currentToken.clase == BREAK || currentToken.clase == LLAVEI || currentToken.clase == RETURN || currentToken.clase == SWITCH || currentToken.clase == ID){
+            sentencia();
+            instruccionesP();
         }
 	}
 	
 	public  void sentencia() throws IOException{
-        System.out.println("Entré a sentencia.");
-        if(currentToken.clase == (ID) || currentToken.clase == (PA)){
-            localizacion();
-			if (currentToken.clase == IGUAL){
-                eat(IGUAL);
+        if(currentToken.clase == IF){
+            eat(IF);
+            if(currentToken.clase == PA){
+                eat(PA);
                 bool();
-                if(currentToken.clase == PCOMA){
-                    eat(PCOMA);
-                }else{
-                    error();
+                if(currentToken.clase == PC){
+                    eat(PC);
+                    sentencia();
+                    sentenciaP();
                 }
-			}else{
-				error();
-			}
-		}
-		
-		if(currentToken.clase == (INT) || currentToken.clase == (FLOAT) || currentToken.clase == (CHAR) || currentToken.clase == (DOUBLE) || currentToken.clase == (VOID)){
-			bloque();
-		}
-		
-		if(currentToken.clase == (IF)){
-            eat(currentToken.clase);
-            System.out.println(currentToken.clase);
-			if(currentToken.clase == (PA)){
-				eat(currentToken.clase);
-				bool();
-				if(currentToken.clase == (PC)){
-					eat(currentToken.clase);
-					sentencia();
-					sentenciaPP();
-				}else{
-					error();
-				}
-			}else{
-				error();
-			}
-		}
-		
-		if(currentToken.clase == (DO)){
-			eat(currentToken.clase);
-			sentencia();
-			if(currentToken.clase == (WHILE)){
-				eat(currentToken.clase);
-				if(currentToken.clase == (PA)){
-					eat(currentToken.clase);
-					bool();
-					if(currentToken.clase == (PC)){
-						eat(currentToken.clase);
-					}else{
-						error();
-					}
-				}else{
-					error();
-				}	
-			}else{
-				error();
-			}			
-		}
-		
-		if(currentToken.clase == BREAK){
-			eat(currentToken.clase);
-			if(currentToken.clase  == PCOMA){
-				eat(currentToken.clase);
-			}else{
-				error();
-			}
-		}
-		
-		if(currentToken.clase == SWITCH){
-			eat(currentToken.clase);
-			if(currentToken.clase == (PA)){
-				eat(currentToken.clase);
-				bool();
-				if(currentToken.clase == (PC)){
-					eat(currentToken.clase);
-					if(currentToken.clase == (LLAVED)){
-						eat(currentToken.clase);
-						casos();
-						if(currentToken.clase == (LLAVEI)){
-							eat(currentToken.clase);
-						}else{
-							error();
-						}
-					}else{
-						error();
-					}
-				}
-			}else{
-				error();
-			}	
-		}
-
-		if(currentToken.clase == RETURN){
-			eat(currentToken.clase);
-			sentenciaP();
-        }
-        if(currentToken.clase == WHILE){
+            }
+        }else if(currentToken.clase == WHILE){
             eat(WHILE);
             if(currentToken.clase == PA){
                 eat(PA);
                 bool();
-                eat(PC);
-                sentencia();
+                if(currentToken.clase == PC){
+                    eat(PC);
+                    sentencia();
+                }
+            }
+        }else if(currentToken.clase == DO){
+            eat(DO);
+            sentencia();
+            if(currentToken.clase == WHILE){
+                eat(WHILE);
+                if(currentToken.clase == PA){
+                    eat(PA);
+                    bool();
+                    if(currentToken.clase == PC){
+                        eat(PC);
+                    } 
+                }
+            }
+        }else if(currentToken.clase == BREAK){
+            eat(BREAK);
+            eat(PCOMA);
+            
+        }else if(currentToken.clase == LLAVEI){
+            bloque();
+        }else if(currentToken.clase == RETURN){
+            eat(RETURN);
+            sentenciaPP();
+            eat(PC);
+        }else if(currentToken.clase == SWITCH){
+            eat(SWITCH);
+            if(currentToken.clase == PA){
+                eat(PA);
+                bool();
+                if(currentToken.clase == PC){
+                    eat(PC);
+                    if(currentToken.clase == LLAVEI){
+                        eat(LLAVEI);
+                        casos();
+                        eat(LLAVED);
+                    } 
+                }   
+            }
+        }else if(currentToken.clase == ID){
+            parteIzquierda();
+            if(currentToken.clase == IGUAL){
+                eat(IGUAL);
+                bool();
+                eat(PCOMA);
             }
         }
-	}
+
+    }
 	
 	public  void sentenciaP() throws IOException{
-		if(currentToken.clase == (PCOMA)){
-			eat(currentToken.clase);
-		}else{
-			exp();
-			if(currentToken.clase == (PCOMA)){
-				eat(currentToken.clase);
-			}else{
-				error();
-			}
+		if(currentToken.clase == ELSE){
+            eat(ELSE);
+            sentencia();
 		}
-	}
+    }
+
 	public  void sentenciaPP() throws IOException{
-		if(currentToken.clase == (ELSE)){
-			eat(currentToken.clase);
-			sentencia();
-		}
+		if(currentToken.clase == (DIFUNI) || currentToken.clase == (RESTA) || currentToken.clase == (PA) || currentToken.clase == (NUMERO) || currentToken.clase == (VER) || currentToken.clase == (FAL) || currentToken.clase == (ID) || currentToken.clase == (PRINT) || currentToken.clase == (SCAN)){
+            exp();
+            eat(PCOMA);
+		}else{
+            eat(PCOMA);
+        }
 	}
 	public  void casos() throws IOException{
 		if(currentToken.clase == (CASE)){
