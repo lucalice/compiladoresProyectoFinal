@@ -1,7 +1,7 @@
 //Nombre: Carranza Escobar Luis Enrique 315286513
 //Nombre: Hernández Calderón Fernando
 //Nombre: Lopez Cruz Luis Enrique 315304770
-//Nombre: Rea Aparicio Angel David
+//Nombre: Rea Aparicio Angel David 315234820
 
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
