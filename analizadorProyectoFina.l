@@ -45,7 +45,7 @@ secEsc = ( \n | \b | \t | \v | \\ | \f | \’ | \” | \0 | \a | \r | \?)
 espacio = [ \t\r\n]
 esps={espacio}+
 entero=({num})+(_?({num})+)*
-flotante = ( {entero} "." {entero}? ({exp})? {entero}? ) | ( {entero}? . {entero}? ({exp})? {entero} )
+flotante = ( {entero}"."{entero}? )
 numero = {flotante} | {entero}
 cadena = ( "\"" ({letra} | {num} | {secEsc} | {sigEsp})* "\"" | "\‘" ({letra} | {num} | {secEsc} | {sigEsp})*  "\‘"  )
 verdadero = true
@@ -135,7 +135,7 @@ scan = "scan"
 {coma} {return new Token(1039," , ");}
 {ca} {return new Token(1040," [ ");}
 {cc} {return new Token(1041," ] ");}
-{numero} {return new Token(1042,"numero");}
+{numero} {System.out.println(yytext());return new Token(1042,"numero");}
 {print} {return new Token(1048,"print");}
 {cadena} {return new Token(1043,"cadena");}
 {scan} {return new Token(1049,"scan");}

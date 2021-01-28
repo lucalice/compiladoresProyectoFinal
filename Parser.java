@@ -52,7 +52,7 @@ public class Parser{
     public final int DIFUNI = 1046;
     public final int PRINT = 1048;
     public final int SCAN = 1049;
-    public final int DECIMAL = 1050;
+    //public final int DECIMAL = 1050;
 
 
 	private  Yylex lexer;
