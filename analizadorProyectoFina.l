@@ -42,10 +42,10 @@ num =[0-9]
 exp = (e|E)("+"|-)
 sigEsp = ("+"| - | @ | # | \ | "/" | "*" | % | . | , | _ | # | "$" | &)
 secEsc = ( \n | \b | \t | \v | \\ | \f | \’ | \” | \0 | \a | \r | \?)
-espacio = [ \t\tn\n]
+espacio = [ \t\r\n]
 esps={espacio}+
 entero=({num})+(_?({num})+)*
-flotante = ( {entero} . {entero}? ({exp})? {entero}? ) | ( {entero}? . {entero}? ({exp})? {entero} )
+flotante = ( {entero} "." {entero}? ({exp})? {entero}? ) | ( {entero}? . {entero}? ({exp})? {entero} )
 numero = {flotante} | {entero}
 cadena = ( "\"" ({letra} | {num} | {secEsc} | {sigEsp})* "\"" | "\‘" ({letra} | {num} | {secEsc} | {sigEsp})*  "\‘"  )
 verdadero = true
@@ -62,11 +62,11 @@ for = for
 return = return
 break = break
 continue = continue
-int= int
-float= float 
-char= char
-double= double
-void= void
+int = int
+float = float 
+char = char
+double = double
+void = void
 pa= "("
 pc= ")"
 igual= "="
@@ -93,6 +93,8 @@ llavei = "{"
 llaved = "}"
 diferenteuni = "!"
 id=({letra}|_)+({num}|{letra}|_)*
+print = "print"
+scan = "scan"
 
 %%
 
@@ -134,7 +136,9 @@ id=({letra}|_)+({num}|{letra}|_)*
 {ca} {return new Token(1040," [ ");}
 {cc} {return new Token(1041," ] ");}
 {numero} {return new Token(1042,"numero");}
+{print} {return new Token(1048,"print");}
 {cadena} {return new Token(1043,"cadena");}
+{scan} {return new Token(1049,"scan");}
 {llavei} {return new Token(1044,"{");}
 {llaved} {return new Token(1045,"}");}
 {diferenteuni} {return new Token(1046,"diferenteuni");}
@@ -146,4 +150,5 @@ id=({letra}|_)+({num}|{letra}|_)*
 {void} {return new Token(1019, "void");}
 {id} { return new Token(1014,"id");}
 {num} {return new Token(1047,"num");}
+
 . { System.out.println("Error al identificar token");}
