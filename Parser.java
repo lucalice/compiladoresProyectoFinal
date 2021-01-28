@@ -52,6 +52,7 @@ public class Parser{
     public final int DIFUNI = 1046;
     public final int PRINT = 1048;
     public final int SCAN = 1049;
+    public final int DECIMAL = 1050;
 
 
 	private  Yylex lexer;
@@ -81,6 +82,7 @@ public class Parser{
                 System.out.println("Me comí "+currentToken.clase+" con valor: "+currentToken.valor);
                 currentToken=lexer.yylex();
             }else{
+                System.out.println(currentToken.clase);
                 error("Error de sintaxis.");
                 currentToken.clase = -1;
                 currentToken.valor = "EOF";
@@ -426,7 +428,6 @@ public class Parser{
 	}
 	
 	public  void bloque() throws IOException{
-        
 		if(currentToken.clase == LLAVEI){
             eat(LLAVEI);
             declaraciones();
@@ -441,13 +442,14 @@ public class Parser{
 	}
 	
 	public  void instruccionesP() throws IOException{		
-        if(currentToken.clase == IF || currentToken.clase == WHILE || currentToken.clase == DO || currentToken.clase == IF || currentToken.clase == BREAK || currentToken.clase == LLAVEI || currentToken.clase == RETURN || currentToken.clase == SWITCH || currentToken.clase == ID){
+        if(currentToken.clase == IF || currentToken.clase == WHILE || currentToken.clase == DO || currentToken.clase == IF || currentToken.clase == BREAK || currentToken.clase == LLAVEI || currentToken.clase == RETURN || currentToken.clase == SWITCH || currentToken.clase == ID || currentToken.clase == PRINT || currentToken.clase == SCAN){
             sentencia();
             instruccionesP();
         }
 	}
 	
 	public  void sentencia() throws IOException{
+        System.out.println("Entré a sentencia");
         if(currentToken.clase == IF){
             eat(IF);
             if(currentToken.clase == PA){
@@ -513,7 +515,17 @@ public class Parser{
                 bool();
                 eat(PCOMA);
             }
+        }else if(currentToken.clase == PRINT){
+            System.out.println("Enté al print");
+            eat(PRINT);
+            exp();
+            eat(PCOMA);
+        }else if(currentToken.clase == SCAN){
+            eat(SCAN);
+            parteIzquierda();
+            eat(PCOMA);
         }
+
 
     }
 	
