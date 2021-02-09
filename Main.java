@@ -20,11 +20,11 @@ public class Main{
 		parser.programa();
 		if(parser.currentToken.clase == 0){
 			System.out.println("Cadena Aceptada");
-		}else{
+		}else if (parser.currentToken.clase == -1){
 			System.out.println("Error sintactico");
 		}
 		bf.close();
-
+		parser.getAyuda();
 	}catch(IOException e){
 		System.out.println("Error al abrir el archivo");
 	}	
