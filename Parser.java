@@ -1,5 +1,6 @@
 import java.util.Stack;
 import java.io.IOException;
+import java.util.Stack;
 
 public class Parser{
 	
@@ -52,7 +53,12 @@ public class Parser{
     public final int DIFUNI = 1046;
     public final int PRINT = 1048;
     public final int SCAN = 1049;
-    //public final int DECIMAL = 1050;
+    public final int DECIMAL = 1050;
+
+    Stack<TablaSimbolos> pilaTS;
+    Stack<TablaTipos> pilaTT;
+    int dir = 0;
+    int idTT = 4;
 
 
 	private  Yylex lexer;
@@ -63,7 +69,14 @@ public class Parser{
 	}
 	
 	public Parser(Yylex lexer){
-		this.lexer = lexer;
+        this.lexer = lexer;
+        //Inicializamos las pilas en el contructor
+        pilaTS = new Stack<TablaSimbolos>();
+        pilaTT = new Stack<TablaTipos>();
+        pilaTT.push(new TablaTipos(0,"int",4,0,-1));
+        pilaTT.push(new TablaTipos(1,"float",4,0,-1));
+        pilaTT.push(new TablaTipos(2,"char",1,0,-1));
+        pilaTT.push(new TablaTipos(3,"double",8,0,-1));
     }
 	
 	public void error(String mensaje) {
@@ -92,14 +105,6 @@ public class Parser{
         }
     }
     
-    /*public  void eat(Token currentToken) throws IOException{
-		if(currentToken.clase.equals(currentToken)){
-			currentToken=lexer.yylex();
-		}else{
-			error("Error de sintaxis");
-		}
-    }*/
-    
     /*Inicio gramática*/
 
 	public  void programa() throws IOException{
@@ -107,66 +112,110 @@ public class Parser{
 		funciones();
 	}
 	public  void declaraciones() throws IOException{
+        int listaVarTipo;
         if(currentToken.clase == (INT)){
-            tipo();
+            listaVarTipo = tipo();
             lista_var();
 		    eat(PCOMA);
 		    declaraciones();
 		}else if(currentToken.clase == (FLOAT)){
-			tipo();
+			listaVarTipo = tipo();
             lista_var();
 		    eat(PCOMA);
 		    declaraciones();
 		}else if(currentToken.clase == (CHAR)){
-			tipo();
+			listaVarTipo = tipo();
             lista_var();
 		    eat(PCOMA);
 		    declaraciones();
 		}else if(currentToken.clase == (DOUBLE)){
-			tipo();
+			listaVarTipo = tipo();
             lista_var();
 		    eat(PCOMA);
 		    declaraciones();
 		}else if(currentToken.clase == (VOID)){
-			tipo();
+			listaVarTipo = tipo();
             lista_var();
 		    eat(PCOMA);
 		    declaraciones();
-		}
+        }
+        
 	}
 
-	public  void tipo() throws IOException {
-        basico();
-		compuesto();
+	public int tipo() throws IOException {
+        int compuestoBase = basico();
+        compuesto(compuestoBase);
+        return compuestoBase;
 	}
 
-	public  void basico() throws IOException {
+	public int basico() throws IOException {
 		if(currentToken.clase == (INT)){
+            /*
+            for (TablaTipos dato:pilaTT){
+                if(!dato.tipo.equals("int")){
+                    pilaTT.push(new TablaTipos(idTT,"int",4,0,-1));
+                }
+            }*/
             eat(INT);
+            return 0;
 		}else if(currentToken.clase == (FLOAT)){
-			eat(FLOAT);
+            /*for (TablaTipos dato:pilaTT){
+                if(!dato.tipo.equals("float")){
+                    pilaTT.push(new TablaTipos(idTT,"float",4,0,-1));
+                }
+            }*/
+            eat(FLOAT);
+            return 1;
 		}else if(currentToken.clase == (CHAR)){
-			eat(CHAR);
+            /*for (TablaTipos dato:pilaTT){
+                if(!dato.tipo.equals("char")){
+                    pilaTT.push(new TablaTipos(idTT,"char",1,0,-1));
+                }
+            }*/
+            eat(CHAR);
+            return 2;
 		}else if(currentToken.clase == (DOUBLE)){
-			eat(DOUBLE);
+            /*for (TablaTipos dato:pilaTT){
+                if(!dato.tipo.equals("double")){
+                    pilaTT.push(new TablaTipos(idTT,"double",8,0,-1));
+                }
+            }*/
+            eat(DOUBLE);
+            return 3;
 		}else if(currentToken.clase == (VOID)){
-			eat(VOID);
+            eat(VOID);
+            return 4;
 		}else{
 			System.out.println("Error de sintaxis. Se esperaba un "+currentToken.clase+" tenemos :" +currentToken.valor);
-		}
+        }
+        return -1;
 	}
 
-	public  void compuesto() throws IOException{
+	public  void compuesto(int compuestoBase) throws IOException{
+        int compuestoTipo;
+        int compuestoBase1;
+        int elementos = 0;
+        int tamaño = 0;
         if(currentToken.clase == CA){
             eat(CA);
             if(currentToken.clase == NUMERO){
+                elementos = NUMERO;
                 eat(NUMERO);
                 if(currentToken.clase == CC){
                     eat(CC);
+                    for (TablaTipos dato:pilaTT){
+                        if(dato.id == compuestoBase){
+                            tamaño = elementos*dato.tamaño;
+                        } 
+                    }
+                    compuestoTipo = pilaTT.push(new TablaTipos(idTT,"array",tamaño,elementos,compuestoBase)).id;
+                    compuestoBase1 = compuestoBase;
+                    idTT += 1;
+                    compuesto(compuestoBase1);
                 }
             }
-            compuesto();
         }
+        compuestoTipo = compuestoBase;
 	}
 
 	public  void lista_var() throws IOException{
@@ -567,7 +616,14 @@ public class Parser{
 				error();
 			}
 		}
-	}
+    }
+    
+    public void getAyuda(){
+        System.out.println("id\tnom\ttam\tnumEle\ttipoBase");
+        for (TablaTipos dato:pilaTT){
+            System.out.println(dato.id+"\t"+dato.tipo+"\t"+dato.tamaño+"\t"+dato.numElementos+"\t"+dato.tipoBase);
+        }
+    }
 	    
 //-------------------
 
