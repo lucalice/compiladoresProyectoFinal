@@ -1,7 +1,7 @@
 //Nombre: Carranza Escobar Luis Enrique 315286513
-//Nombre: Hernández Calderón Fernando
-//Nombre: Lopez Cruz Luis Enrique 315304770
-//Nombre: Rea Aparicio Angel David 315234820
+//Nombre:
+//Nombre:
+//Nombre:
 
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
@@ -46,7 +46,8 @@ espacio = [ \t\r\n]
 esps={espacio}+
 entero=({num})+(_?({num})+)*
 flotante = ( {entero} "." {entero}? ({exp})? {entero}? )
-numero = {flotante} | {entero}
+numero = {entero}
+decimal = {flotante}
 cadena = ( "\"" ({letra} | {num} | {secEsc} | {sigEsp})* "\"" | "\‘" ({letra} | {num} | {secEsc} | {sigEsp})*  "\‘"  )
 verdadero = true
 falso = false
@@ -112,7 +113,8 @@ scan = "scan"
 {return} { return new Token(1011,"return");}
 {break} { return new Token(1012,"break");}
 {continue} { return new Token(1013,"continue");}
-{numero} {System.out.println(yytext()); return new Token(1042,"numero");}
+{numero} {return new Token(1042,yytext(),0);}
+{decimal} {return new Token(1050,yytext(),1);}
 {pa} {return new Token(1020, "(");}
 {pc} {return new Token(1021, ")");}
 {igual} {return new Token(1022, "=");} 
@@ -147,6 +149,6 @@ scan = "scan"
 {char} {return new Token(1017,"char");}
 {double} {return new Token(1018,"double");}
 {void} {return new Token(1019, "void");}
-{id} { return new Token(1014,"id");}
+{id} { return new Token(1014,yytext());}
 
-. { System.out.println("Error al identificar token");}
+. { System.out.println("Error lexico. En la línea ");}
