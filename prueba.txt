@@ -1,16 +1,20 @@
-int [ 1 ] a;
-float f;
-char el;
 int b;
+double [ 1 ][ 2 ] a,be,ht,jk;
+float f,qw,we;
+char el;
+float y;
 func int alpha(){
-    int [ 4 ] a;
-    int d;
+    int d,gr,tr,qew;
     int h;
-    char z; 
-    float resultado;
-    resultado = h + 1;
+    char z;
+    float res;
+    res = h + 1;
+    d = 1.1;
     d = h - 1;
     d = 1 + 2;
+    d = h + 2;
+    print "Hola bro";
+    scan f [ 2 ];
 }
 
 func void g(char f, float g){
