@@ -153,36 +153,15 @@ public class Parser{
 
 	public int basico() throws IOException {
 		if(currentToken.clase == (INT)){
-            /*
-            for (TablaTipos dato:pilaTT){
-                if(!dato.tipo.equals("int")){
-                    pilaTT.push(new TablaTipos(idTT,"int",4,0,-1));
-                }
-            }*/
             eat(INT);
             return 0;
 		}else if(currentToken.clase == (FLOAT)){
-            /*for (TablaTipos dato:pilaTT){
-                if(!dato.tipo.equals("float")){
-                    pilaTT.push(new TablaTipos(idTT,"float",4,0,-1));
-                }
-            }*/
             eat(FLOAT);
             return 1;
 		}else if(currentToken.clase == (CHAR)){
-            /*for (TablaTipos dato:pilaTT){
-                if(!dato.tipo.equals("char")){
-                    pilaTT.push(new TablaTipos(idTT,"char",1,0,-1));
-                }
-            }*/
             eat(CHAR);
             return 2;
 		}else if(currentToken.clase == (DOUBLE)){
-            /*for (TablaTipos dato:pilaTT){
-                if(!dato.tipo.equals("double")){
-                    pilaTT.push(new TablaTipos(idTT,"double",8,0,-1));
-                }
-            }*/
             eat(DOUBLE);
             return 3;
 		}else if(currentToken.clase == (VOID)){
@@ -223,20 +202,31 @@ public class Parser{
 	}
 
 	public  void lista_var(int tipo) throws IOException{
+        int lista_varPTipo = tipo;
         if(buscarTS(currentToken.valor)){
             pilaTS.push(new TablaSimbolos(idTS,currentToken.valor,tipo,dir,"var",-1));
             idTS += 1;
             dir = dir + buscarTT(tipo);
+        }else{
+            System.out.println("El id ya está declarado.");
         }
         eat(ID);
-        lista_varPrima();
+        lista_varPrima(lista_varPTipo);
 	}
 
-	public  void lista_varPrima() throws IOException{
-		if(currentToken.clase == COMA){
+	public  void lista_varPrima(int listaVarTipo) throws IOException{
+        int lista_varPTipo1 = listaVarTipo;
+        if(currentToken.clase == COMA){
             eat(COMA);
+            if(buscarTS(currentToken.valor)){
+                pilaTS.push(new TablaSimbolos(idTS,currentToken.valor,listaVarTipo,dir,"var",-1));
+                idTS += 1;
+                dir = dir + buscarTT(listaVarTipo);
+            }else{
+                System.out.println("El id ya está declarado.");
+            }
             eat(ID);
-            lista_varPrima();
+            lista_varPrima(lista_varPTipo1);
         }
 	}
 
