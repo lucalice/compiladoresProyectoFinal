@@ -1,6 +1,7 @@
 import java.util.Stack;
 import java.io.IOException;
 import java.util.Stack;
+import java.util.ArrayList;
 
 public class Parser{
 	
@@ -57,8 +58,10 @@ public class Parser{
 
     Stack<TablaSimbolos> pilaTS;
     Stack<TablaTipos> pilaTT;
+    ArrayList tablaDirecciones;
     int dir = 0;
     int idTT = 4;
+    int idTS = 0;
 
 
 	private  Yylex lexer;
@@ -73,6 +76,7 @@ public class Parser{
         //Inicializamos las pilas en el contructor
         pilaTS = new Stack<TablaSimbolos>();
         pilaTT = new Stack<TablaTipos>();
+        tablaDirecciones = new ArrayList();
         pilaTT.push(new TablaTipos(0,"int",4,0,-1));
         pilaTT.push(new TablaTipos(1,"float",4,0,-1));
         pilaTT.push(new TablaTipos(2,"char",1,0,-1));
@@ -92,7 +96,7 @@ public class Parser{
 	public  void eat(int value){
 		try {
             if(currentToken.clase == value){
-                System.out.println("Me comí "+currentToken.clase+" con valor: "+currentToken.valor);
+            //    System.out.println("Me comí "+currentToken.clase+" con valor: "+currentToken.valor);
                 currentToken=lexer.yylex();
             }else{
                 System.out.println(currentToken.clase);
@@ -115,27 +119,27 @@ public class Parser{
         int listaVarTipo;
         if(currentToken.clase == (INT)){
             listaVarTipo = tipo();
-            lista_var();
+            lista_var(listaVarTipo);
 		    eat(PCOMA);
 		    declaraciones();
 		}else if(currentToken.clase == (FLOAT)){
 			listaVarTipo = tipo();
-            lista_var();
+            lista_var(listaVarTipo);
 		    eat(PCOMA);
 		    declaraciones();
 		}else if(currentToken.clase == (CHAR)){
 			listaVarTipo = tipo();
-            lista_var();
+            lista_var(listaVarTipo);
 		    eat(PCOMA);
 		    declaraciones();
 		}else if(currentToken.clase == (DOUBLE)){
 			listaVarTipo = tipo();
-            lista_var();
+            lista_var(listaVarTipo);
 		    eat(PCOMA);
 		    declaraciones();
 		}else if(currentToken.clase == (VOID)){
 			listaVarTipo = tipo();
-            lista_var();
+            lista_var(listaVarTipo);
 		    eat(PCOMA);
 		    declaraciones();
         }
@@ -144,8 +148,7 @@ public class Parser{
 
 	public int tipo() throws IOException {
         int compuestoBase = basico();
-        compuesto(compuestoBase);
-        return compuestoBase;
+        return compuesto(compuestoBase);
 	}
 
 	public int basico() throws IOException {
@@ -191,7 +194,7 @@ public class Parser{
         return -1;
 	}
 
-	public  void compuesto(int compuestoBase) throws IOException{
+	public int compuesto(int compuestoBase) throws IOException{
         int compuestoTipo;
         int compuestoBase1;
         int elementos = 0;
@@ -199,7 +202,7 @@ public class Parser{
         if(currentToken.clase == CA){
             eat(CA);
             if(currentToken.clase == NUMERO){
-                elementos = NUMERO;
+                elementos = Integer.parseInt(currentToken.valor);
                 eat(NUMERO);
                 if(currentToken.clase == CC){
                     eat(CC);
@@ -211,14 +214,20 @@ public class Parser{
                     compuestoTipo = pilaTT.push(new TablaTipos(idTT,"array",tamaño,elementos,compuestoBase)).id;
                     compuestoBase1 = compuestoBase;
                     idTT += 1;
-                    compuesto(compuestoBase1);
+                    return compuesto(compuestoTipo);
                 }
             }
         }
-        compuestoTipo = compuestoBase;
+        /* compuestoTipo = compuestoBase;*/
+        return compuestoBase;
 	}
 
-	public  void lista_var() throws IOException{
+	public  void lista_var(int tipo) throws IOException{
+        if(buscarTS(currentToken.valor)){
+            pilaTS.push(new TablaSimbolos(idTS,currentToken.valor,tipo,dir,"var",-1));
+            idTS += 1;
+            dir = dir + buscarTT(tipo);
+        }
         eat(ID);
         lista_varPrima();
 	}
@@ -234,6 +243,9 @@ public class Parser{
 	public  void funciones() throws IOException {
         if(currentToken.clase == FUNC){
             eat(FUNC);
+            /*pilaTS.push(pilaTS2 =  new Stack<TablaSimbolos>());
+            pilaTT.push(pilaTT2 =  new Stack<TablaTipos>());
+            tablaDirecciones.add(dir);*/
             tipo();
             eat(ID);
             eat(PA);
@@ -376,8 +388,10 @@ public class Parser{
             eat(PA);
             bool();
             eat(PC);
-        }else if(currentToken.clase == (NUMERO)){
+        }if(currentToken.clase == NUMERO){
             eat(NUMERO);
+        }else if (currentToken.clase == DECIMAL){
+            eat(DECIMAL);
         }else if(currentToken.clase == (CADENA)){
             eat(CADENA);
         }else if(currentToken.clase == (VER)){
@@ -498,7 +512,6 @@ public class Parser{
 	}
 	
 	public  void sentencia() throws IOException{
-        System.out.println("Entré a sentencia");
         if(currentToken.clase == IF){
             eat(IF);
             if(currentToken.clase == PA){
@@ -565,7 +578,6 @@ public class Parser{
                 eat(PCOMA);
             }
         }else if(currentToken.clase == PRINT){
-            System.out.println("Enté al print");
             eat(PRINT);
             exp();
             eat(PCOMA);
@@ -586,7 +598,7 @@ public class Parser{
     }
 
 	public  void sentenciaPP() throws IOException{
-		if(currentToken.clase == (DIFUNI) || currentToken.clase == (RESTA) || currentToken.clase == (PA) || currentToken.clase == (NUMERO) || currentToken.clase == (VER) || currentToken.clase == (FAL) || currentToken.clase == (ID) || currentToken.clase == (PRINT) || currentToken.clase == (SCAN)){
+		if(currentToken.clase == (DIFUNI) || currentToken.clase == (RESTA) || currentToken.clase == (PA) || currentToken.clase == (NUMERO) || currentToken.clase == DECIMAL || currentToken.clase == (VER) || currentToken.clase == (FAL) || currentToken.clase == (ID) || currentToken.clase == (PRINT) || currentToken.clase == (SCAN)){
             exp();
             eat(PCOMA);
 		}else{
@@ -605,14 +617,22 @@ public class Parser{
 		if(currentToken.clase == (CASE)){
 			eat(currentToken.clase);
 			if(currentToken.clase == (NUMERO)){
-				eat(currentToken.clase);
+				eat(NUMERO);
 				if(currentToken.clase == (DOSPU)){
 					eat(currentToken.clase);
 					instrucciones();
 				}else{
 					error();
 				}
-			}else{
+            }else if (currentToken.clase == DECIMAL){
+                eat(DECIMAL);
+				if(currentToken.clase == (DOSPU)){
+					eat(currentToken.clase);
+					instrucciones();
+				}else{
+					error();
+				}
+            }else{
 				error();
 			}
 		}
@@ -623,6 +643,31 @@ public class Parser{
         for (TablaTipos dato:pilaTT){
             System.out.println(dato.id+"\t"+dato.tipo+"\t"+dato.tamaño+"\t"+dato.numElementos+"\t"+dato.tipoBase);
         }
+    }
+    public void getTS(){
+        System.out.println("\n");
+        System.out.println("Pos\tid\ttipo\tdir\tvar\tparams");
+        for (TablaSimbolos dato:pilaTS){
+            System.out.println(dato.posicion+"\t"+dato.id+"\t"+dato.tipo+"\t"+dato.direccion+"\t"+dato.var+"\t"+dato.args);
+        }
+    }
+
+    public boolean buscarTS(String id){
+        for (TablaSimbolos dato:pilaTS){
+            if(dato.id.equals(id)){
+                return false;
+            }
+        }
+        return true;
+    }
+
+    public int buscarTT(int tipo){
+        for (TablaTipos dato:pilaTT){
+            if(dato.id == tipo){
+                return dato.tamaño;
+            }
+        }
+        return 1;
     }
 	    
 //-------------------
