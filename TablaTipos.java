@@ -1,6 +1,6 @@
 public class TablaTipos{
 
-    int id;
+    int id; 
     String tipo;
     int tamaño;
     int numElementos;
