@@ -88,7 +88,7 @@ public class Parser{
 	}
 
 	public  void error() {
-        System.out.println("Error de sintaxis 2");
+        System.out.println("Error 2 de sintaxis en la línea: "+currentToken.line);
         currentToken.clase = -1;
         currentToken.valor = "EOF";
 	}
@@ -99,8 +99,7 @@ public class Parser{
             //    System.out.println("Me comí "+currentToken.clase+" con valor: "+currentToken.valor);
                 currentToken=lexer.yylex();
             }else{
-                System.out.println(currentToken.clase);
-                error("Error de sintaxis.");
+                error("Error de sintaxis en la línea: "+currentToken.line);
                 currentToken.clase = -1;
                 currentToken.valor = "EOF";
             }
@@ -142,6 +141,10 @@ public class Parser{
             lista_var(listaVarTipo);
 		    eat(PCOMA);
 		    declaraciones();
+        }else if(currentToken.clase == (ID)){
+            if(buscarTS(currentToken.valor)){
+                error();
+            }
         }
         
 	}
@@ -209,6 +212,7 @@ public class Parser{
             dir = dir + buscarTT(tipo);
         }else{
             System.out.println("El id ya está declarado.");
+            error();
         }
         eat(ID);
         lista_varPrima(lista_varPTipo);
