@@ -65,6 +65,10 @@ public class Parser{
     Stack<Integer> tablaDirecciones;
     Stack<Integer> idTSLista;
     Stack<Integer> idTTLista;
+    ArrayList<Integer> argumentosLista;
+    ArrayList<Integer> argumentosListaP;
+    ArrayList<Integer> listArgumentos;
+    ArrayList<Integer> listArgumentosP;
     int dir = 0;
     int idTT = 5;
     int idTS = 0;
@@ -218,7 +222,7 @@ public class Parser{
 	public  void lista_var(int tipo) throws IOException{
         int lista_varPTipo = tipo;
         if(buscarTS(currentToken.valor)){
-            pilaTS.push(new TablaSimbolos(idTS,currentToken.valor,tipo,dir,"var",-1));
+            pilaTS.push(new TablaSimbolos(idTS,currentToken.valor,tipo,dir,"var",null));
             idTS += 1;
             dir = dir + buscarTT(tipo);
         }else{
@@ -234,7 +238,7 @@ public class Parser{
         if(currentToken.clase == COMA){
             eat(COMA);
             if(buscarTS(currentToken.valor)){
-                pilaTS.push(new TablaSimbolos(idTS,currentToken.valor,listaVarTipo,dir,"var",-1));
+                pilaTS.push(new TablaSimbolos(idTS,currentToken.valor,listaVarTipo,dir,"var",null));
                 idTS += 1;
                 dir = dir + buscarTT(listaVarTipo);
             }else{
@@ -292,7 +296,7 @@ public class Parser{
                 idTT = idTTLista.pop().intValue();
                 dir = tablaDirecciones.pop().intValue();
                 //int posicion, String id, int tipo, int direccion, String var, int args
-                pilaTS.push(new TablaSimbolos(idTS,idTemp,tipoFuncion,-1,"func",0));
+                pilaTS.push(new TablaSimbolos(idTS,idTemp,tipoFuncion,-1,"func",listArgumentos));
                 idTS += 1;
             }
             funciones();
@@ -498,39 +502,56 @@ public class Parser{
 	    
 
 	public  void argumentos() throws IOException{
-    //public  void argumentos(Stack args)throws IOException{
-		/*if(args != null){
-			list_args(args);
-        }*/
         if(currentToken.clase == (INT)){
-            lista_args();
+            listArgumentos = lista_args();
 		}else if(currentToken.clase == (FLOAT)){
-			lista_args();
+			listArgumentos = lista_args();
 		}else if(currentToken.clase == (CHAR)){
-			lista_args();
+			listArgumentos = lista_args();
 		}else if(currentToken.clase == (DOUBLE)){
-			lista_args();
+			listArgumentos = lista_args();
 		}else if(currentToken.clase == (VOID)){
-			lista_args();
+			listArgumentos = lista_args();
 		}else{
-			
+			listArgumentos = null;
 		}
 	}
 	
-	public  void lista_args() throws IOException{
-    //public  void list_args(Stack args) throws IOException{
-		tipo();
+	public ArrayList<Integer> lista_args() throws IOException{
+		int tipoId = tipo();
+        if(buscarTS(currentToken.valor)){
+            //int posicion, String id, int tipo, int direccion, String var, ArrayList<Integer> args
+            pilaTS.push(new TablaSimbolos(idTS,currentToken.valor,tipoId,dir,"var",null));
+            idTS += 1;
+            dir += buscarTT(tipoId);
+        }else{
+            error("El id ya existe.");
+        }
         eat(ID);
-        lista_argsP();
+        argumentosLista = new ArrayList<Integer>();
+        argumentosLista.add(tipoId);
+        return lista_argsP(argumentosLista);
 	}
 	
-	public  void lista_argsP() throws IOException {
-		if (currentToken.clase == (COMA)){
+	public  ArrayList<Integer> lista_argsP(ArrayList<Integer> lista_argumentos) throws IOException {
+        int tipoId;
+        if (currentToken.clase == (COMA)){
 			eat(COMA);
-			tipo();
-		    eat(ID);
-			lista_argsP();
-		}
+			tipoId = tipo();
+            if(buscarTS(currentToken.valor)){
+                //int posicion, String id, int tipo, int direccion, String var, ArrayList<Integer> args
+                pilaTS.push(new TablaSimbolos(idTS,currentToken.valor,tipoId,dir,"var",null));
+                idTS += 1;
+                dir += buscarTT(tipoId);
+            }else{
+                error("El id ya existe.");
+            }
+            eat(ID);
+            argumentosListaP = lista_argumentos;
+            argumentosListaP.add(tipoId);
+			lista_argsP(argumentosListaP);
+        }
+        return lista_argumentos;
 	}
 	
 	public  void bloque() throws IOException{
