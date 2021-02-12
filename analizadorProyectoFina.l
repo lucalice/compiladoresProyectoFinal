@@ -1,7 +1,7 @@
 //Nombre: Carranza Escobar Luis Enrique 315286513
-//Nombre:
-//Nombre:
-//Nombre:
+//Nombre: Hernandez Calderón Fernando
+//Nombre: Lopez Cruz Luis Enrique
+//Nombre: Rea Aparicio Angel David
 
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
