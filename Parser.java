@@ -69,6 +69,7 @@ public class Parser{
     ArrayList<Integer> argumentosListaP;
     ArrayList<Integer> listArgumentos;
     ArrayList<Integer> listArgumentosP;
+    Semantico semanti = new Semantico();
     int dir = 0;
     int idTT = 5;
     int idTS = 0;
@@ -226,8 +227,7 @@ public class Parser{
             idTS += 1;
             dir = dir + buscarTT(tipo);
         }else{
-            System.out.println("El id ya está declarado.");
-            error();
+            error("El id ya está declarado.");
         }
         eat(ID);
         lista_varPrima(lista_varPTipo);
@@ -304,6 +304,7 @@ public class Parser{
     }
     
     public void parteIzquierda() throws IOException{
+        //int tipoParteIzquierda;
         if(currentToken.clase == ID){
             eat(ID);
             parteIzquierdaP();
@@ -635,12 +636,26 @@ public class Parser{
                 }   
             }
         }else if(currentToken.clase == ID){
+            /*int tipoParteIzquierda;
+            int tipoParteDerecha;
+            if(!buscarTS(currentToken.valor)){
+                for (TablaSimbolos dato:pilaTS){
+                    if(dato.id.equals(currentToken.valor)){
+                        tipoParteIzquierda = dato.tipo;
+                    }
+                }
+            }*/
             parteIzquierda();
             if(currentToken.clase == IGUAL){
                 eat(IGUAL);
                 bool();
                 eat(PCOMA);
             }
+            /*if(semanti.equivalentes(tipoParteIzquierda,tipoParteDerecha)){
+
+            }else{
+                System.out.println("No puedes asignar el tipo "+tipoParteDerecha+" a una variable de tipo "+tipoParteIzquierda);
+            }*/
         }else if(currentToken.clase == PRINT){
             eat(PRINT);
             exp();
@@ -746,15 +761,29 @@ public class Parser{
     }
 
     public int buscarTT(int tipo){
-        for (TablaTipos dato:pilaTT){
+        /*for (TablaTipos dato:pilaTT){
             if(dato.id == tipo){
                 return dato.tamaño;
             }
+        }*/
+        for(int i = pilaTT.size()-1; i >= 0; i--){
+            if(pilaTT.get(i).id == tipo){
+                return pilaTT.get(i).tamaño;
+            }
+
         }
         return 1;
     }
+    /*
+    public int buscarTTTipo(int id){
+        for (TablaTipos dato:pilaTT){
+            if(dato.id == id){
+                return dato.tipo;
+            }
+        }
+        return 1;
+    }*/
 	    
 //-------------------
 
 }
- 
