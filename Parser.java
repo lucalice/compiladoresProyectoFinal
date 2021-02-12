@@ -61,10 +61,12 @@ public class Parser{
     Stack<TablaSimbolos> pilaTS2;
     Stack<TablaTipos> pilaTT2;
     Stack<TablaSimbolos> aux;
+    Stack<TablaTipos> aux1;
     Stack<Integer> tablaDirecciones;
     Stack<Integer> idTSLista;
+    Stack<Integer> idTTLista;
     int dir = 0;
-    int idTT = 4;
+    int idTT = 5;
     int idTS = 0;
 
 
@@ -80,12 +82,16 @@ public class Parser{
         //Inicializamos las pilas en el contructor
         pilaTS = new Stack<TablaSimbolos>();
         pilaTT = new Stack<TablaTipos>();
+        pilaTT2 = new Stack<TablaTipos>();
         tablaDirecciones = new Stack<Integer>();
         idTSLista = new Stack<Integer>();
+        idTTLista = new Stack<Integer>();
+        aux1 = new Stack<TablaTipos>();
         pilaTT.push(new TablaTipos(0,"int",4,0,-1));
         pilaTT.push(new TablaTipos(1,"float",4,0,-1));
         pilaTT.push(new TablaTipos(2,"char",1,0,-1));
         pilaTT.push(new TablaTipos(3,"double",8,0,-1));
+        pilaTT.push(new TablaTipos(4,"void",0,0,-1));
     }
 	
 	public void error(String mensaje) {
@@ -247,10 +253,17 @@ public class Parser{
             eat(FUNC);
             pilaTS2 =  new Stack<TablaSimbolos>();
             pilaTT2 =  new Stack<TablaTipos>();
+            pilaTT2.push(new TablaTipos(0,"int",4,0,-1));
+            pilaTT2.push(new TablaTipos(1,"float",4,0,-1));
+            pilaTT2.push(new TablaTipos(2,"char",1,0,-1));
+            pilaTT2.push(new TablaTipos(3,"double",8,0,-1));
+            pilaTT2.push(new TablaTipos(4,"void",0,0,-1));
             tablaDirecciones.push(dir);
             idTSLista.push(idTS);
+            idTTLista.push(idTT);
             dir = 0;
             idTS = 0;
+            idTT = 5;
             tipoFuncion = tipo();
             idTemp = currentToken.valor;
             eat(ID);
@@ -266,8 +279,17 @@ public class Parser{
                 for(int i = 1; i <= idTS; i++){
                     pilaTS2.push(aux.pop());
                 }
+                for(int i = 6; i <= idTT; i++){
+                    aux1.push(pilaTT.pop());
+                }
+                for(int i = 6; i <= idTT; i++){
+                    pilaTT2.push(aux1.pop());
+                }
+
                 getAyudaTS2();
+                getAyudaTT2();
                 idTS = idTSLista.pop().intValue();
+                idTT = idTTLista.pop().intValue();
                 dir = tablaDirecciones.pop().intValue();
                 //int posicion, String id, int tipo, int direccion, String var, int args
                 pilaTS.push(new TablaSimbolos(idTS,idTemp,tipoFuncion,-1,"func",0));
@@ -474,7 +496,7 @@ public class Parser{
 		}
 	}  
 	    
-//8 - 14
+
 	public  void argumentos() throws IOException{
     //public  void argumentos(Stack args)throws IOException{
 		/*if(args != null){
@@ -667,9 +689,19 @@ public class Parser{
         }
     }
 
+    public void getAyudaTT2(){
+        if(pilaTT2.size() > 5){
+            System.out.println("\nTabla de tipos 2 \n");
+            System.out.println("id\tnom\ttam\tnumEle\ttipoBase");
+            for (TablaTipos dato:pilaTT2){
+                System.out.println(dato.id+"\t"+dato.tipo+"\t"+dato.tamaño+"\t"+dato.numElementos+"\t"+dato.tipoBase);
+            }
+        }
+    }
+
     public void getAyudaTS2(){
         System.out.println("\nTabla de Simbolos 2 \n");
-        System.out.println("id\tnom\ttam\tnumEle\ttipoBase");
+        System.out.println("Pos\tid\ttipo\tdir\tvar\tparams");
         for (TablaSimbolos dato:pilaTS2){
             System.out.println(dato.posicion+"\t"+dato.id+"\t"+dato.tipo+"\t"+dato.direccion+"\t"+dato.var+"\t"+dato.args);
         }
