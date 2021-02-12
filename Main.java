@@ -24,8 +24,8 @@ public class Main{
 			System.out.println("Error sintactico");
 		}
 		bf.close();
-		parser.getAyuda();
 		parser.getTS();
+		parser.getAyuda();
 	}catch(IOException e){
 		System.out.println("Error al abrir el archivo");
 	}	
