@@ -1,3 +1,4 @@
+import java.util.ArrayList;
 public class TablaSimbolos{
     
     int posicion;
@@ -5,13 +6,13 @@ public class TablaSimbolos{
     int tipo;
     int direccion;
     String var;
-    int args;
+    ArrayList<Integer> args;
 
     public TablaSimbolos(){
 
     }
 
-    public TablaSimbolos(int posicion, String id, int tipo, int direccion, String var, int args){
+    public TablaSimbolos(int posicion, String id, int tipo, int direccion, String var, ArrayList<Integer> args){
         this.posicion = posicion;
         this.id = id;
         this.tipo = tipo;
